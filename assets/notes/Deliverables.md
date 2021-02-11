@@ -31,6 +31,7 @@
 > - Express.js
 > - BootStrap
 > - Material-UI
+> - Mongoose - MongoDB
 
 3. A schedule for completion of various tasks.
 > * Feb 10 - Project Decided
