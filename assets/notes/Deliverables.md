@@ -10,7 +10,7 @@
 > * Nate - Users, Back-End
 > * Justin - Tasks
 
-> Features - 
+> Features
 > - Checklist
 >   - Has Sections, Tasks
 > - Tasks
@@ -25,6 +25,12 @@
 > - Users
 >   - Manager (Reviews, Sign-off tasks)
 >   - Minion (completes tasks, submit for review)
+
+> Technologies
+> - React.js
+> - Express.js
+> - BootStrap
+> - Material-UI
 
 3. A schedule for completion of various tasks.
 > * Feb 10 - Project Decided
