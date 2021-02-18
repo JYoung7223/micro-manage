@@ -7,7 +7,7 @@ import Nav from './components/Nav';
 function App() {
   return (
     <Router>
-      <div>
+      <div id="app">
         <Nav />
         <Switch>
           {/* What should the homepage be? */}
