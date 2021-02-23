@@ -8,7 +8,7 @@ const Homepage = (props) => {
 
 	return (
 		<div className="container">
-			<div id="cover-image"></div>
+			
 		</div>
 	)
 }
