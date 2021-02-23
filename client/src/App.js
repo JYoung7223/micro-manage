@@ -3,6 +3,7 @@ import './App.css';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Homepage from './containers/Homepage/Homepage';
 import Nav from './components/Nav';
+import Checklist from './components/Checklist/Checklist';
 
 function App() {
   return (
@@ -15,7 +16,7 @@ function App() {
             <Homepage />
           </Route>
           <Route exact path="/checklist/:id">
-            {/* <Checklist /> */}
+            <Checklist />
           </Route>
           <Route>
             {/* <NoMatch /> */}
