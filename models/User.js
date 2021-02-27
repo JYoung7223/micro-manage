@@ -85,8 +85,9 @@ UserSchema.methods.checkPassword = function(passedPassword, callbackFunction){
 // When to check password hash
 UserSchema.pre("save", hashPassword); // create
 UserSchema.pre("findOneAndUpdate", hashPassword); // update
+// UserSchema.pre("insertMany", hashPassword); // bulkCreate  Hash needs to be done on each element before doing the bulk create
 
-const User = Mongoose.model("User", UserShcema);
+const User = Mongoose.model("User", UserSchema);
 
 module.exports = {
   User,
