@@ -15,6 +15,27 @@ module.exports = {
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
+  login: function(req, res) {
+    console.log("body:",req.body);
+    db.User
+      .find({"email": req.body.email})
+      .then((user)=>{
+        const returnedUser = new db.User(user[0]);
+        returnedUser.checkPassword(req.body.password, (err, result)=>{
+          if(err){
+            res.status(422).json(err);
+          }else if(result){
+            res.status(200).json(user);
+          }else{
+            res.status(401).json({"error": "Invalid Username or Password"});
+          }
+        });
+      })
+      .catch((err)=>{
+        console.log("Error Logging In:",err);
+        res.status(401).json(err);
+      });
+  },
   create: function(req, res) {
     db.User
       .create(req.body)
@@ -23,7 +44,7 @@ module.exports = {
   },
   update: function(req, res) {
     db.User
-      .findOneAndUpdate({ _id: req.params.id }, req.body, ()=>)
+      .findOneAndUpdate({ _id: req.params.id }, req.body, {new: true})
       .then(dbModel => res.json(dbModel))
       .catch(err => {
         console.log("Error updating:",err);

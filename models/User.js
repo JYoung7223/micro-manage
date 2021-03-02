@@ -1,7 +1,7 @@
 const Mongoose = require("mongoose");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
-const bcryptSalt = parseInt(process.env.BCRYPT_SALT);
+const bcryptSalt = parseInt(process.env.BCRYPT_SALT || 10);
 const Schema = Mongoose.Schema;
 
 // Model
@@ -52,15 +52,16 @@ const UserSchema = new Schema(
 );
 
 // Hook Helper Functions
-// Use hooks to hash password 
+/**
+ * Takes a password and returns the hash for the password.
+ * @param {String} password 
+ */
 const hashPassword = async function(password){
   // Prepare Salt
-  await bcrypt.genSalt(bcryptSalt)
+  return await bcrypt.genSalt(bcryptSalt)
     .then(async (salt) =>{
       // Generate the hash
-      console.log("password:",password);
-      console.log("salt:",salt);
-      await bcrypt.hash(password, salt)
+      return await bcrypt.hash(password, salt)
         .then((hash)=>{
           return hash;
         })
@@ -73,39 +74,38 @@ const hashPassword = async function(password){
     });
 };
 
-// Need to hash password before creating user
+// Pre-work when creating user
+// Need to hash password before creating.
 const createUser = async function(){
   this.password = await hashPassword(this.password);
-  console.log("Creating User:",this);
 }
-// Need to check if password changed differently on update than on a create
+// pre-work when updating the user
+// Need to check if password changed on update and hash if yes.
 const updateUser = async function(){
+  // Find current user values.
   const userToUpdate = await this.model.findOne(this.getQuery());
-  
-  console.log("old:", userToUpdate);
-  console.log("Update:",this._update);
-
-  if(userToUpdate.password !== this._update.password){
-    console.log("Password Changed");
+  // If they passed in a password, check if it is changed.
+  if(this._update.password && (userToUpdate.password !== this._update.password)){
     this._update.password = await hashPassword(this._update.password);
-    console.log("New password hashed");
   }
 };
 
+// Used to check entered password against stored hash.
 UserSchema.methods.checkPassword = function(passedPassword, callbackFunction){
-  console.log("Checking Password");
   bcrypt.compare(passedPassword, this.password, 
     function(error, isMatch) {
-      if(error) return callbackFunction(error);
-      return callbackFunction(null, isMatch); // No error so return match
+      if(error){
+        console.log("Error checking password:",error);
+        return callbackFunction(error);
+      }
+      return callbackFunction(null, isMatch); // No error so return match status
     }
   );
 };
 
-// When to check password hash
+// Register hooks
 UserSchema.pre("save", createUser); // create
 UserSchema.pre("findOneAndUpdate", updateUser); // update
-// UserSchema.pre("insertMany", hashPassword); // bulkCreate  Hash needs to be done on each element before doing the bulk create
 
 const User = Mongoose.model("User", UserSchema);
 
