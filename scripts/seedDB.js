@@ -42,14 +42,11 @@ const seedDatabase = async () => {
         const user=userSeedData[h];
         // Hash Passwords
         // Prepare Salt
-        console.log(`Hashing password ${h} for user:${JSON.stringify(user)}`);
         await bcrypt.genSalt(bcryptSalt)
           .then(async (salt) =>{
             // Generate the hash
-            console.log("Salt", salt);
             await bcrypt.hash(user.password, salt)
               .then((hash)=>{
-                console.log("Hash",hash);
                 user.password = hash;
               })
               .catch((error)=>{console.log("Error generating hash:",error);});
@@ -57,7 +54,6 @@ const seedDatabase = async () => {
           .catch((err)=>{console.log("Error generating salt:",err);});
 
         // Add Roles
-        console.log(`Adding roles ${h} for user:${JSON.stringify(user)}`);
         user.roles = [];
         // Add All roles to the first half of users
         if (h < userSeedData.length / 2) {
@@ -70,7 +66,6 @@ const seedDatabase = async () => {
             _id: roleDBData[Math.floor(Math.random() * roleDBData.length)]._id,
           });
         }
-        console.log(`Prepared user: ${JSON.stringify(user)}`);
       }
 
       // Insert prepared Users
