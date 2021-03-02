@@ -1,0 +1,21 @@
+div.ag-root-wrapper-body.ag-layout-normal.ag-focus-managed {
+  height: 100%;
+}
+
+div.ag-details-row.ag-details-row-fixed-height {
+  padding: 0px;
+}
+
+.rotated-text {
+  transform: rotate(-90deg);
+}
+
+div.ag-header-cell.ag-focus-managed.rotated-text.no-padding {
+  padding: 0px;
+}
+
+div.initial-cell, div.ag-cell.ag-cell-not-inline-editing.ag-cell-auto-height.initial-cell.ag-cell-value {
+  //width: 50px;
+  padding: 0px;
+  margin-left: 5px;
+}
