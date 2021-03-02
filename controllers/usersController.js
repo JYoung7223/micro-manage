@@ -16,7 +16,6 @@ module.exports = {
       .catch(err => res.status(422).json(err));
   },
   login: function(req, res) {
-    console.log("body:",req.body);
     db.User
       .find({"email": req.body.email})
       .then((user)=>{
