@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Table from '../Bootstrap/Table/Table';
 import { DateTime } from "luxon";
+import './Checklist.scss'
 
 //Checklist schema
 const columnHeadings = [
@@ -33,7 +34,7 @@ const checklist = {
 				   explanation: '01.01',
 				   template: '02.01',
 				   line: 1,
-				   instruction: 'Clean out the dog house for tonight\'s sleepover'
+				   instruction: 'Clean out the dog house'
 			   },
 			   {
 				   finalReview: '',
@@ -45,7 +46,7 @@ const checklist = {
 				   explanation: '01.02',
 				   template: '02.02',
 				   line: 2,
-				   instruction: 'Setup pillow and blanket in the dog house'
+				   instruction: 'Setup sleeping area(pillow blankets, etc.'
 			   },
 			   {
 				   finalReview: '',
@@ -86,7 +87,7 @@ const checklist = {
 				   explanation: '01.02',
 				   template: '02.02',
 				   line: 4,
-				   instruction: 'Prepare dinner (there\'s dog food somewhere'
+				   instruction: 'Prepare dinner (there\'s dog food somewhere)'
 			   }
 		   ]
 	   },
@@ -153,7 +154,7 @@ const Checklist = ( {checklistId, ...props} ) => {
     //Other Methods
 
     return (
-		<div className='container'>
+		<div style={ {height: '100%'} }>
 			<h2>Checklist</h2>
 			<Table columnHeadings={columnHeadings} phases={checklist.phases}></Table>
 		</div>
