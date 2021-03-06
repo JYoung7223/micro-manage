@@ -18,13 +18,14 @@ module.exports = {
   login: function(req, res) {
     db.User
       .find({"email": req.body.email})
+      .populate("roles")
       .then((user)=>{
         const returnedUser = new db.User(user[0]);
         returnedUser.checkPassword(req.body.password, (err, result)=>{
           if(err){
             res.status(422).json(err);
           }else if(result){
-            res.status(200).json(user);
+            res.status(200).json(returnedUser);
           }else{
             res.status(401).json({"error": "Invalid Username or Password"});
           }
