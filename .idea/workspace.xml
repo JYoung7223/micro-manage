@@ -2,15 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2fb17c89-1aee-4d5c-9888-d404db5c6c15" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/client/src/components/ChecklistCard/ChecklistCard.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/src/utils/StickyState.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/List/List.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/List/List.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/List/ListItem.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/List/ListItem.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/ChecklistCard/ChecklistCard.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/ChecklistCard/ChecklistCard.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/containers/ChecklistManagment/ChecklistManagement.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/containers/ChecklistManagment/ChecklistManagement.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/containers/Homepage/Homepage.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/containers/Homepage/Homepage.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/client/yarn.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controllers/checklistsController.js" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/checklistsController.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,12 +22,6 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1680" />
-    <option name="y" value="-390" />
-    <option name="width" value="2560" />
-    <option name="height" value="1057" />
   </component>
   <component name="ProjectId" id="1pGwG5hEYXXZQeAewyn73lxo9JW" />
   <component name="ProjectViewState">
@@ -92,6 +81,7 @@
       <workItem from="1614228619797" duration="861000" />
       <workItem from="1614442988848" duration="6951000" />
       <workItem from="1614822642693" duration="5400000" />
+      <workItem from="1615051129892" duration="4539000" />
     </task>
     <servers />
   </component>

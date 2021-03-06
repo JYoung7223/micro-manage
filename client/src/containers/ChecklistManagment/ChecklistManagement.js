@@ -5,6 +5,10 @@ import ListItem from '../../components/List/ListItem';
 import ChecklistCard from "../../components/ChecklistCard/ChecklistCard";
 import useStickyState from "../../utils/StickyState";
 import _ from 'lodash';
+import Grid from "@material-ui/core/Grid";
+import Button from "@material-ui/core/Button";
+
+const newChecklist = {_id: '', title: '', phases: []}
 
 export default function ChecklistManagement() {
     const [checklists, setChecklists] = useState([]);
@@ -20,7 +24,7 @@ export default function ChecklistManagement() {
         setChecklists(checklistsResponse.data);
     }
 
-    const updateChecklist = async (id) => {
+    const goToUpdateChecklist = async (id) => {
         window.location = `/checklist/${id}`;
     }
 
@@ -44,34 +48,57 @@ export default function ChecklistManagement() {
         window.location = `/checklist/${currentChecklist[0].id}`;
     }
 
+    const createNewChecklist = async() => {
+        setChecklists([{...newChecklist}, ...checklists]);
+    }
+
+    const saveChecklist = async(checklist) => {
+        const updatedChecklist = await axios.post('/api/checklists/', checklist);
+    };
+
+    const deleteChecklist = async(checklistId) => {
+        const deleteChecklist = await axios.delete('/api/checklists/' + checklistId);
+        getChecklists();
+    }
+
     return (
-        <List>
-            {
-                checklists.map(checklist => {
-                    return (<ListItem key={checklist._id + 'li'}>
-                        <ChecklistCard
-                            title={checklist.title}
-                            fillOut={fillOutChecklist}
-                            update={updateChecklist}
-                            continue={continueCurrentChecklist}
-                            canContinue={currentChecklists.find(ck => ck.template === checklist.id || ck.template === checklist._id)}
-                            id={checklist._id}
-                            key={checklist._id}
-                        >
-                            <List>
-                                {
-                                    checklist.phases.map((phase, index) => {
-                                        if(index > 2)
-                                            return;
-                                        return (<ListItem key={`phase${index}`}>{phase.title}</ListItem>)
-                                    })
-                                }
-                            </List>
-                        </ChecklistCard>
-                    </ListItem>)
-                })
-            }
-        </List>
+        <>
+            <Grid container>
+                <Grid item>
+                    <Button variant="contained" size="small" onClick={e => createNewChecklist()}>New Checklist</Button>
+                </Grid>
+            </Grid>
+            <List>
+                {
+                    checklists.map(checklist => {
+                        return (<ListItem key={checklist._id + 'li'}>
+                            <ChecklistCard
+                                title={checklist.title}
+                                fillOut={fillOutChecklist}
+                                update={goToUpdateChecklist}
+                                continue={continueCurrentChecklist}
+                                deleteChecklist={deleteChecklist}
+                                canContinue={currentChecklists.find(ck => ck.template === checklist.id || ck.template === checklist._id)}
+                                canFillOut={checklist.phases.length > 0}
+                                id={checklist._id}
+                                key={checklist._id}
+                                saveChecklist={(title) => saveChecklist({...checklist, title})}
+                            >
+                                <List>
+                                    {
+                                        checklist.phases.map((phase, index) => {
+                                            if(index > 2)
+                                                return;
+                                            return (<ListItem key={`phase${index}`}>{phase.title}</ListItem>)
+                                        })
+                                    }
+                                </List>
+                            </ChecklistCard>
+                        </ListItem>)
+                    })
+                }
+            </List>
+        </>
     )
 }
 
