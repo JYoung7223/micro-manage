@@ -1,5 +1,11 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Checkbox from '../Checkbox/Checkbox';
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+import 'ag-grid-enterprise';
+import GridExample from "../../AgGrid/MasterDetail";
+
 
 /**
  * A Bootstrap styled table
@@ -7,7 +13,7 @@ import Checkbox from '../Checkbox/Checkbox';
  * @constructor
  */
 const Table = ( {columnHeadings = [], phases = []} ) => {
-    //state variables
+	//state variables
 
     //useEffects(Lifecycle Methods)
     /**
@@ -25,42 +31,45 @@ const Table = ( {columnHeadings = [], phases = []} ) => {
 	};
 
     return (
-		<table className='table table-striped table-dark table-hover table-bordered'>
-			<thead>
-				<tr>
-					{columnHeadings.map( head => <td scope="col" style={head.style ? head.style : {}}>{head.label}</td>)}
-				</tr>
-			</thead>
-			<tbody>
-				{
-					phases.map(phase => (
-						<>
-							<tr>
-								<td colSpan={columnHeadings.length}><p className='h4'>{phase.title}</p></td>
-							</tr>
-							{
-								phase.tasks.map(row => 
-									(
-										<tr scope={'row'}>
-											{columnHeadings.map( head => {
-												let td = '';
-												if(typeof row[head.value] === 'boolean')
-													td = <Checkbox name={head.value} checked={row[head.value]} updateChecked={updateChecked}></Checkbox>
-												else
-													td = row[head.value]
+		<GridExample>
+
+		</GridExample>
+		// <table className='table table-striped table-dark table-hover table-bordered'>
+		// 	<thead>
+		// 		<tr>
+		// 			{columnHeadings.map( head => <td scope="col" style={head.style ? head.style : {}}>{head.label}</td>)}
+		// 		</tr>
+		// 	</thead>
+		// 	<tbody>
+		// 		{
+		// 			phases.map(phase => (
+		// 				<>
+		// 					<tr>
+		// 						<td colSpan={columnHeadings.length}><p className='h4'>{phase.title}</p></td>
+		// 					</tr>
+		// 					{
+		// 						phase.tasks.map(row => 
+		// 							(
+		// 								<tr scope={'row'}>
+		// 									{columnHeadings.map( head => {
+		// 										let td = '';
+		// 										if(typeof row[head.value] === 'boolean')
+		// 											td = <Checkbox name={head.value} checked={row[head.value]} updateChecked={updateChecked}></Checkbox>
+		// 										else
+		// 											td = row[head.value]
 				
-												return <td scope='col'>{td}</td>
-											})}
-										</tr>
-									)
+		// 										return <td scope='col'>{td}</td>
+		// 									})}
+		// 								</tr>
+		// 							)
 									
-								)
-							}
-						</>
-					))
-				}
-			</tbody>
-		</table>
+		// 						)
+		// 					}
+		// 				</>
+		// 			))
+		// 		}
+		// 	</tbody>
+		// </table>
     );
 };
 
