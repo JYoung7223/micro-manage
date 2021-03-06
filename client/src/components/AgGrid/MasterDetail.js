@@ -357,22 +357,22 @@ const GridExample = props => {
         const overNode = event.overNode;
         const rowNeedsToMove = movingNode !== overNode;
         console.log('event on row drag move', event);
-        // if (rowNeedsToMove) {
-        //     const movingData = movingNode.data;
-        //     const overData = overNode.data;
-        //     const fromIndex = rowData.indexOf(movingData);
-        //     const toIndex = rowData.indexOf(overData);
-        //     const newStore = rowData.slice();
-        //     moveInArray(newStore, fromIndex, toIndex);
-        //     setData(newStore);
-        //     gridApi.current.setRowData(newStore);
-        //     gridApi.current.clearFocusedCell();
-        // }
-        // function moveInArray(arr, fromIndex, toIndex) {
-        //     const element = arr[fromIndex];
-        //     arr.splice(fromIndex, 1);
-        //     arr.splice(toIndex, 0, element);
-        // }
+        if (rowNeedsToMove) {
+            const movingData = movingNode.data;
+            const overData = overNode.data;
+            const fromIndex = rowData.indexOf(movingData);
+            const toIndex = rowData.indexOf(overData);
+            const newStore = rowData.slice();
+            moveInArray(newStore, fromIndex, toIndex);
+            setData(newStore);
+            event.api.setRowData(newStore);
+            event.api.clearFocusedCell();
+        }
+        function moveInArray(arr, fromIndex, toIndex) {
+            const element = arr[fromIndex];
+            arr.splice(fromIndex, 1);
+            arr.splice(toIndex, 0, element);
+        }
     };
     initialState.detailCellRendererParams.detailGridOptions.onSortChanged = () => {
         const sortModel = gridApi.current.getSortModel();
