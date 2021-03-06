@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function List(props) {
     return (
-        <ul class="list-group">
+        <ul className="list-group">
             {props.children}
         </ul>
     )

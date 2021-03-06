@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function ListItem(props) {
     return (
-        <li class="list-group-item">
+        <li className="list-group-item">
             {props.children}
         </li>
     );
