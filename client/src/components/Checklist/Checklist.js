@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Table from '../Bootstrap/Table/Table';
 import { DateTime } from "luxon";
+import './Checklist.scss'
 
 //Checklist schema
 const columnHeadings = [
@@ -153,7 +154,7 @@ const Checklist = ( {checklistId, ...props} ) => {
     //Other Methods
 
     return (
-		<div className='container'>
+		<div style={ {height: '100%'} }>
 			<h2>Checklist</h2>
 			<Table columnHeadings={columnHeadings} phases={checklist.phases}></Table>
 		</div>
