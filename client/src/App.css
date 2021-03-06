@@ -7,6 +7,21 @@
   pointer-events: none;
 }
 
+html, body, div#root, div#app {
+  height: 100%;
+  width: 100%;
+}
+
+div#app {
+  background-color: grey;
+}
+
+div#app>div.container-fluid {
+  height: calc(100% - 60px);
+  padding-top: 30px;
+  background-color: white;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
