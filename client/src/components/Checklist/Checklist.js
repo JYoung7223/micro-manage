@@ -5,7 +5,7 @@ import axios from "axios";
 import './Checklist.scss';
 import { useQuery } from "../../utils/useQuery";
 import {useParams} from "react-router";
-
+import MasterDetailGrid from "../AgGrid/MasterDetail";
 //Checklist schema
 const columnHeadings = [
 	{ label: 'Final Reviewed By', value: 'finalReview', style: {transform: 'rotate(90deg)'} },
@@ -18,7 +18,7 @@ const columnHeadings = [
 	{ label: 'Template Ref', value: 'template', style: {transform: 'rotate(90deg)'}  },
 	{ label: 'Line #', value: 'line' },
 	{ label: 'Instruction / Detail', value: 'instruction', style: {minWidth: '600px'} },
-]
+];
 
 const now = DateTime.now().toFormat('MM/dd');
 
@@ -42,7 +42,6 @@ const Checklist = ( {props} ) => {
 		setChecklist(checklistResponse.data);
 	};
 
-
 	//useEffects(Lifecycle Methods)
     /**
      * ComponentDidMount: What should happen when this component is first loaded into the DOM
@@ -52,9 +51,10 @@ const Checklist = ( {props} ) => {
     return (
 		<div style={ {height: '100%'} }>
 			<h2>Checklist</h2>
-			<Table columnHeadings={columnHeadings} phases={checklist.phases}></Table>
+			<MasterDetailGrid phases={checklist.phases}>
+
+			</MasterDetailGrid>
 		</div>
-        
     );
 };
 
