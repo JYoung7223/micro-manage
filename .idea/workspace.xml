@@ -2,16 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2fb17c89-1aee-4d5c-9888-d404db5c6c15" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/client/src/components/Checklist/Checklist.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/src/utils/Referencing.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/App.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/AgGrid/AgGrid.scss" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/AgGrid/AgGrid.scss" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/components/AgGrid/MasterDetail.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/AgGrid/MasterDetail.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/Checklist/Checklist.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/Checklist/Checklist.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/client/yarn.lock" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -38,14 +29,14 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="css" value="227" />
-          <entry key="js" value="8514" />
+          <entry key="js" value="8523" />
           <entry key="scss" value="484" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="CSS" value="227" />
-          <entry key="JavaScript" value="8514" />
+          <entry key="JavaScript" value="8523" />
           <entry key="SCSS" value="484" />
         </counts>
       </usages-collector>
@@ -148,8 +139,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/client/src/components/AgGrid/MasterDetail.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="435">
-                  <caret line="360" column="33" lean-forward="true" selection-start-line="360" selection-start-column="33" selection-end-line="360" selection-end-column="33" />
+                <state relative-caret-position="474">
+                  <caret line="366" column="30" lean-forward="true" selection-start-line="366" selection-start-column="30" selection-end-line="366" selection-end-column="30" />
                   <folding>
                     <element signature="e#15#74#0" expanded="true" />
                   </folding>
@@ -286,12 +277,12 @@
       <workItem from="1614651314762" duration="5761000" />
       <workItem from="1614725767023" duration="9428000" />
       <workItem from="1614822627027" duration="5111000" />
-      <workItem from="1615046691188" duration="5908000" />
+      <workItem from="1615046691188" duration="6608000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="37319000" />
+    <option name="totallyTimeSpent" value="38019000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1680" y="-413" width="2560" height="1080" extended-state="0" />
@@ -408,8 +399,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/src/components/AgGrid/MasterDetail.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="360" column="33" lean-forward="true" selection-start-line="360" selection-start-column="33" selection-end-line="360" selection-end-column="33" />
+        <state relative-caret-position="474">
+          <caret line="366" column="30" lean-forward="true" selection-start-line="366" selection-start-column="30" selection-end-line="366" selection-end-column="30" />
           <folding>
             <element signature="e#15#74#0" expanded="true" />
           </folding>
