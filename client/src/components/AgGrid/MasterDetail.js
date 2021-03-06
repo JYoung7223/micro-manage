@@ -22,7 +22,7 @@ const initialState = {
         ColumnsToolPanelModule,
     ],
     columnDefs: [
-        { field: 'title', headerName: 'Phases', cellRenderer: 'agGroupCellRenderer' },
+        { field: 'title', headerName: 'Phases', cellRenderer: 'agGroupCellRenderer', rowDrag: true, },
         { field: 'order', headerName: 'Line', hide: true },
     ],
     defaultColDef: {
@@ -105,13 +105,13 @@ const initialState = {
                     headerName: 'Line #',
                     maxWidth: 100,
                     sortable: true,
-                    rowDrag: true,
                     // headerClass: 'rotated-header',
                 },
                 {
                     field: 'instruction',
                     headerName: 'Instructions / Detail',
                     minWidth: 300,
+                    rowDrag: true,
                 },
             ],
             onGridReady: params => {
@@ -201,7 +201,7 @@ const initialState = {
     ],
 };
 
-const GridExample = props => {
+const MasterDetailGrid = ( {phases} ) => {
     const [data, setData] = useState([]);
     const gridApi = useRef({});
     const gridColumnApi = useRef({});
@@ -210,6 +210,7 @@ const GridExample = props => {
     useEffect( () => {
         //Get the row data
         let rowData = initialState.rowData;
+        // let rowData = checklist;
 
         //Add the phase id to each task, this will help me know which phase to modify when a
         //task is modified or a new task is added.
@@ -219,7 +220,7 @@ const GridExample = props => {
 
         //Update the state
         setData(rowData);
-    }, []);
+    }, [phases]);
 
     const onGridReady = (params) => {
         gridApi.current = params.api;
@@ -349,22 +350,27 @@ const GridExample = props => {
         }
     };
 
-    initialState.detailCellRendererParams.detailGridOptions.getContextMenuItems = getContextMenuItems;
-    initialState.detailCellRendererParams.detailGridOptions.onRowDragMove = (event) => {
+    const onRowDragMove = (event) => {
         let rowData = [];
         event.api.forEachNode(node => rowData.push(node));
+        rowData = rowData.map(node => node.data);
         const movingNode = event.node;
         const overNode = event.overNode;
         const rowNeedsToMove = movingNode !== overNode;
-        console.log('event on row drag move', event);
         if (rowNeedsToMove) {
             const movingData = movingNode.data;
             const overData = overNode.data;
-            const fromIndex = rowData.indexOf(movingData);
-            const toIndex = rowData.indexOf(overData);
+            const fromIndex = rowData.findIndex(row => row._id === movingData._id);
+            const toIndex = rowData.findIndex(row => row._id === overData._id);
             const newStore = rowData.slice();
             moveInArray(newStore, fromIndex, toIndex);
-            setData(newStore);
+            newStore.forEach( (row, index) => {
+                if(row.line)
+                    row.line = index + 1;
+                else if(row.order)
+                    row.order = index + 1;
+            });
+            // event.api.applyTransaction(newStore);
             event.api.setRowData(newStore);
             event.api.clearFocusedCell();
         }
@@ -374,7 +380,8 @@ const GridExample = props => {
             arr.splice(toIndex, 0, element);
         }
     };
-    initialState.detailCellRendererParams.detailGridOptions.onSortChanged = () => {
+
+    const onSortChanged = () => {
         const sortModel = gridApi.current.getSortModel();
         sortActive.current = sortModel && sortModel.length > 0;
         const suppressRowDrag = sortActive;
@@ -386,6 +393,10 @@ const GridExample = props => {
         );
         gridApi.current.setSuppressRowDrag(suppressRowDrag);
     };
+
+    initialState.detailCellRendererParams.detailGridOptions.getContextMenuItems = getContextMenuItems;
+    initialState.detailCellRendererParams.detailGridOptions.onRowDragMove = onRowDragMove;
+    initialState.detailCellRendererParams.detailGridOptions.onSortChanged = onSortChanged;
 
     initialState.detailCellRendererParams.detailGridOptions.onCellValueChanged = (params) => {
         console.log("cell value changed", params);
@@ -454,6 +465,8 @@ const GridExample = props => {
                     defaultColDef={initialState.defaultColDef}
                     masterDetail={true}
                     stopEditingWhenGridLosesFocus={true}
+                    onRowDragMove={onRowDragMove}
+                    onSortChanged={onSortChanged}
                     // rowDragManaged={true}
                     // defaultSortColumn={'order'}
                     sortModel={[{field: 'order', sort: 'asc'}]}
@@ -470,7 +483,7 @@ const GridExample = props => {
     );
 };
 
-export default GridExample
+export default MasterDetailGrid
 
 // function getDatePicker() {
 //     function Datepicker() {}
