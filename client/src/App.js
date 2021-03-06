@@ -10,18 +10,20 @@ function App() {
     <Router>
       <div id="app">
         <Nav />
-        <Switch>
-          {/* What should the homepage be? */}
-          <Route exact path="/">
-            <Homepage />
-          </Route>
-          <Route exact path="/checklist/:id">
-            <Checklist />
-          </Route>
-          <Route>
-            {/* <NoMatch /> */}
-          </Route>
-        </Switch>
+        <div className={'container-fluid'}>
+          <Switch>
+            {/* What should the homepage be? */}
+            <Route exact path="/">
+              <Homepage />
+            </Route>
+            <Route exact path="/checklist/:id">
+              <Checklist />
+            </Route>
+            <Route>
+              {/* <NoMatch /> */}
+            </Route>
+          </Switch>
+        </div>
       </div>
     </Router>
   );
