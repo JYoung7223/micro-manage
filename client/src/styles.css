@@ -1,0 +1,60 @@
+:root{
+    --primary-company-color:#6a459b;
+    --primary-focus-color:#d2c3e0;
+    --secondary-company-color:rgba(112, 128, 144, 0.747);
+}
+
+.hidden{
+    display:none;
+}
+.logo img{
+    width:5rem;
+    height:5rem;
+}
+.connect-img{
+    max-width:7rem;
+    max-height:5rem;
+}
+.project-img{
+    max-width:18rem;
+    /* max-height:5rem; */
+}
+.company-name{
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    font-size:1.5rem;
+    font-weight:bold;
+}
+.text-company-primary{
+    color:var(--primary-company-color);
+    text-shadow: 1px 1px #FFFFFF;
+}
+.text-company-secondary{
+    color:var(--secondary-company-color);
+    text-shadow: 1px 1px #FFFFFF;
+}
+.navbar img{
+    width:1rem;
+    height:1rem;
+}
+a{
+    color: var(--primary-company-color);
+}
+header a:hover{
+    text-decoration: none;
+    color:var(--primary-company-color);
+}
+
+/* BootStrap Overrides */
+/* Buttons */
+.btn-primary{
+    background-color:var(--primary-company-color);
+    border-color:var(--primary-company-color);
+}
+.btn-primary:hover, .btn-primary:focus{
+    background-color:var(--primary-focus-color);
+    border-color:var(--primary-focus-color);
+}
+
+.carousel-item img{
+    max-height: 300px;
+}

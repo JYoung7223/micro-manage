@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useContext} from 'react';
 import Table from '../Bootstrap/Table/Table';
 import { DateTime } from "luxon";
 import axios from "axios";
@@ -6,6 +6,8 @@ import './Checklist.scss';
 import { useQuery } from "../../utils/useQuery";
 import {useParams} from "react-router";
 import MasterDetailGrid from "../AgGrid/MasterDetail";
+import {redirectToLogin, UserContext} from "../../utils/userContext";
+
 //Checklist schema
 const columnHeadings = [
 	{ label: 'Final Reviewed By', value: 'finalReview', style: {transform: 'rotate(90deg)'} },
@@ -31,8 +33,11 @@ const Checklist = ( {props} ) => {
     //state variables
 	let [checklist, setChecklist] = useState({});
 	let { id } = useParams();
+	const { user } = useContext(UserContext);
 
 	useEffect( () => {
+		if(!user)
+			return redirectToLogin();
 		getChecklists();
 	}, []);
 

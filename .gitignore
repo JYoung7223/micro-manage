@@ -4,6 +4,8 @@
 /node_modules
 /.idea/
 /client/node_modules
+package-lock.json
+/client/package-lock.json
 /.pnp
 .pnp.js
 
