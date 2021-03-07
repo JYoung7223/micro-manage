@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -6,6 +6,7 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import TextField from "@material-ui/core/TextField";
+import {redirectToLogin, UserContext} from "../../utils/userContext";
 
 const useStyles = makeStyles({
     root: {
@@ -29,6 +30,7 @@ export default function ChecklistCard(props) {
     const bull = <span className={classes.bullet}>•</span>;
     const [editingTitle, setEditingTitle] = useState(props.title ? false : true);
     const [checklistTitle, setChecklistTitle] = useState(props.title);
+    const { user } = useContext(UserContext);
 
     return (
         <Card className={classes.root}>
@@ -51,10 +53,10 @@ export default function ChecklistCard(props) {
                             </> :
                             <>
                                 {checklistTitle}
-                                <Button variant="contained" size="small" onClick={e => setEditingTitle(true)}>Edit Title</Button>
+                                <Button variant="contained" size="small" onClick={e => {if(!user) return redirectToLogin(); return setEditingTitle(true);}}>Edit Title</Button>
                             </>
                     }
-                    <Button variant="contained" size="small" color="secondary" style={{float: 'right'}} onClick={e => props.deleteChecklist(props.id)}>Delete</Button>
+                    <Button variant="contained" size="small" color="secondary" style={{float: 'right'}} onClick={e => {if(!user) return redirectToLogin(); return props.deleteChecklist(props.id)}}>Delete</Button>
                 </Typography>
                 <Typography variant="body2" component="div">
                     {props.children}
@@ -63,15 +65,15 @@ export default function ChecklistCard(props) {
             <CardActions>
                 {
                     props.canContinue ?
-                        <Button variant="contained" size="small" onClick={e => props.continue(props.id)}>Continue Last</Button> :
+                        <Button variant="contained" size="small" onClick={e => {if(!user) return redirectToLogin(); return props.continue(props.id)}}>Continue Last</Button> :
                         ''
                 }
                 {
                     props.canFillOut ?
-                        <Button variant="contained" size="small" onClick={e => props.fillOut(props.id)}>Fill out</Button> :
+                        <Button variant="contained" size="small" onClick={e => {if(!user) return redirectToLogin(); return props.fillOut(props.id)}}>Fill out</Button> :
                         ''
                 }
-                <Button variant="contained" size="small" onClick={e => props.update(props.id)}>Update</Button>
+                <Button variant="contained" size="small" onClick={e => {if(!user) return redirectToLogin(); return props.update(props.id)}}>Update</Button>
             </CardActions>
         </Card>
     );

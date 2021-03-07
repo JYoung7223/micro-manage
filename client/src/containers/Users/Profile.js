@@ -1,9 +1,15 @@
-import React, { useContext } from "react";
+import React, {useContext, useEffect} from "react";
 import { EditUser } from "./EditUser";
-import { UserContext } from "../../utils/userContext";
+import {redirectToLogin, UserContext} from "../../utils/userContext";
 
 function Profile(props) {
     const { user }  = useContext(UserContext);
+
+    useEffect( () => {
+        if(!user)
+            return redirectToLogin();
+    }, []);
+
     return (
         <section className="container">
             <div className="row">

@@ -209,7 +209,7 @@ const MasterDetailGrid = ( {phases} ) => {
 
     useEffect( () => {
         //Get the row data
-        let rowData = initialState.rowData;
+        let rowData = [...phases];
         // let rowData = checklist;
 
         //Add the phase id to each task, this will help me know which phase to modify when a
