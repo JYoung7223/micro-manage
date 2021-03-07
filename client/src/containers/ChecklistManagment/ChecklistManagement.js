@@ -58,7 +58,11 @@ export default function ChecklistManagement() {
     }
 
     const saveChecklist = async(checklist) => {
+        if(!checklist._id)
+            delete checklist._id;
         const updatedChecklist = await axios.post('/api/checklists/', checklist);
+
+        getChecklists();
     };
 
     const deleteChecklist = async(checklistId) => {
