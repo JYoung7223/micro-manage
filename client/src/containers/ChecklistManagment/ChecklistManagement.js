@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import axios from 'axios';
 import List from '../../components/List/List';
 import ListItem from '../../components/List/ListItem';
@@ -7,12 +7,15 @@ import useStickyState from "../../utils/StickyState";
 import _ from 'lodash';
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
+import {redirectToLogin, UserContext} from "../../utils/userContext";
 
 const newChecklist = {_id: '', title: '', phases: []}
 
 export default function ChecklistManagement() {
     const [checklists, setChecklists] = useState([]);
-    const [currentChecklists, setCurrentChecklists] = useStickyState([], 'currentChecklist')
+    const [currentChecklists, setCurrentChecklists] = useStickyState([], 'currentChecklist');
+
+    const { user } = useContext(UserContext);
 
     useEffect(() => {
         getChecklists();
@@ -49,11 +52,17 @@ export default function ChecklistManagement() {
     }
 
     const createNewChecklist = async() => {
-        setChecklists([{...newChecklist}, ...checklists]);
+        if(!user)
+            return redirectToLogin();
+        setChecklists([{...newChecklist, owner: user._id}, ...checklists]);
     }
 
     const saveChecklist = async(checklist) => {
+        if(!checklist._id)
+            delete checklist._id;
         const updatedChecklist = await axios.post('/api/checklists/', checklist);
+
+        getChecklists();
     };
 
     const deleteChecklist = async(checklistId) => {

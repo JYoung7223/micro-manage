@@ -1,11 +1,17 @@
-import React, { useRef, useContext } from "react";
+import React, {useRef, useState, useContext, useEffect} from "react";
+import { useHistory } from "react-router-dom";
 import API from "../../utils/API";
-import { UserContext } from "../../utils/userContext";
+import {redirectToLogin, redirectToProfile, UserContext} from "../../utils/userContext";
 
 function Login(props) {
     const emailRef = useRef();
     const passRef = useRef();
     const userContext = useContext(UserContext);     
+
+    useEffect( () => {
+        if(userContext.user?.id)
+            return redirectToProfile();
+    }, []);
 
     const handleLogin = async (event) => {
         event.preventDefault();

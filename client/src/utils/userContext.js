@@ -5,6 +5,16 @@ const UserContext = React.createContext({
   setUser: ()=>{}
 });
 
+function redirectToLogin() {
+  document.location.replace("/users/login");
+}
+
+function redirectToProfile() {
+  document.location.replace("/users");
+}
+
 export { 
-  UserContext
+  UserContext,
+  redirectToLogin,
+  redirectToProfile
 };
