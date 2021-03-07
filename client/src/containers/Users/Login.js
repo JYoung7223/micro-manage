@@ -1,5 +1,4 @@
-import React, { useRef, useState, useContext } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useRef, useContext } from "react";
 import API from "../../utils/API";
 import { UserContext } from "../../utils/userContext";
 
@@ -7,7 +6,6 @@ function Login(props) {
     const emailRef = useRef();
     const passRef = useRef();
     const userContext = useContext(UserContext);     
-    const history = useHistory();
 
     const handleLogin = async (event) => {
         event.preventDefault();
@@ -17,17 +15,15 @@ function Login(props) {
 
         // Collect values from the login form
         if (emailRef.current.value && passRef.current.value) {
-            const response = await API.loginUser(
+            await API.loginUser(
                 { 
                     "email": emailRef.current.value,
                     "password": passRef.current.value 
                 }
                 )
                 .then((res)=>{
-                    console.log("Login Good:",res);
                     userContext.setUser(res.data);
-                    localStorage.setItem("user", JSON.stringify(res.data));
-                    
+                    localStorage.setItem("user", JSON.stringify(res.data));                    
                 })
                 .then(()=>{
                     document.location.replace("/users/");
