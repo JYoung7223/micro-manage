@@ -7,7 +7,6 @@ function Login(props) {
     const emailRef = useRef();
     const passRef = useRef();
     const userContext = useContext(UserContext);     
-    const history = useHistory();
 
     useEffect( () => {
         if(userContext.user?.id)
@@ -22,17 +21,15 @@ function Login(props) {
 
         // Collect values from the login form
         if (emailRef.current.value && passRef.current.value) {
-            const response = await API.loginUser(
+            await API.loginUser(
                 { 
                     "email": emailRef.current.value,
                     "password": passRef.current.value 
                 }
                 )
                 .then((res)=>{
-                    console.log("Login Good:",res);
                     userContext.setUser(res.data);
-                    localStorage.setItem("user", JSON.stringify(res.data));
-                    
+                    localStorage.setItem("user", JSON.stringify(res.data));                    
                 })
                 .then(()=>{
                     document.location.replace("/users/");
