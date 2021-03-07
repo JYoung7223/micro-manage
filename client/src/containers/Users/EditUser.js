@@ -39,9 +39,6 @@ function EditUser(props) {
             if(passRef.current.value){
                 userData.password = passRef.current.value;
             }
-            if(activeRef.current.value){
-                userData.active = activeRef.current.value;
-            }
 
             const response = await API.updateUser(idRef.current.value,
                 userData
@@ -63,18 +60,18 @@ function EditUser(props) {
             <form className="form user-form" id="userForm" onSubmit={handleUpdate}>
                 <div className="row">
                     <div className="col text-end" id="firstnameLabel">First Name:</div>
-                    <input className="col form-control" type="text" id="firstname-user" ref={firstRef} value={user.firstname}/>
+                    <input className="col form-control" type="text" id="firstname-user" ref={firstRef} placeholder={user.firstname}/>
                 </div>
                 <div className="row">
                     <div className="col text-end" id="middlenameLabel">Middle Name:</div>
-                    <input className="col form-control" type="text" id="middlename-user" ref={middleRef} value={user.middlename}/>
+                    <input className="col form-control" type="text" id="middlename-user" ref={middleRef} placeholder={user.middlename}/>
                 </div>
                 <div className="row">
                     <div className="col text-end" id="lastnameLabel">Last Name:</div>
-                    <input className="col form-control" type="text" id="lastname-user" ref={lastRef} value={user.lastname}/>
+                    <input className="col form-control" type="text" id="lastname-user" ref={lastRef} placeholder={user.lastname}/>
                 </div><div className="row">
                     <div className="col text-end" id="emailLabel">Email:</div>
-                    <input className="col form-control" type="email" id="email-user" ref={emailRef} value={user.email}/>
+                    <input className="col form-control" type="email" id="email-user" ref={emailRef} placeholder={user.email}/>
                 </div>
                 <div className="row">
                     <div className="col text-end" id="passwordLabel">New Password:</div>
@@ -83,15 +80,9 @@ function EditUser(props) {
                 <div className="row">
                     <div className="col text-end" id="confirmLabel">Confirm New Password:</div>
                     <input className="col form-control" type="password" id="password-confirm" ref={confirmPassRef} />
-                </div>
-                {/* <div className="row">
-                    <div className="col text-end" id="activeLabel">Active:</div>
-                    <div className="col text-start">
-                        <input type="checkbox" id="active" { return activeRef.current.value ? ( checked ) : ('')}/>
-                    </div>
-                </div>             */}
+                </div>       
                 <div className="row">
-                    <input type="hidden" id="user_id" ref={idRef} value={user.id} />
+                    <input type="hidden" id="user_id" ref={idRef} value={user._id} />
                     <button className="mx-auto col-auto btn btn-primary" type="submit" id="updateUser">Update User</button>
                 </div>
             </form>
