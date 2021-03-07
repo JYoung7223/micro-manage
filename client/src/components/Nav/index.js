@@ -7,7 +7,7 @@ function Nav() {
       <a className="navbar-brand text-white" href="/">
         Home
       </a>
-      <a className="navbar-brand text-white" href="/Login">
+      <a className="navbar-brand text-white" href="/Users/Login">
         Login
       </a>
     </nav>

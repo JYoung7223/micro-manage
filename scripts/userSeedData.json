@@ -1,0 +1,56 @@
+[
+  {
+    "firstname": "Justin",
+    "middlename": "O",
+    "lastname": "Young",
+    "email": "jyoung7223@yahoo.com",
+    "password": "password123",
+    "active": true,
+    "roles": []
+  },
+  {
+    "firstname": "William",
+    "middlename": "",
+    "lastname": "Harrison",
+    "email": "wharrison33@hotmail.com",
+    "password": "password123",
+    "active": true,
+    "roles": []
+  },
+  {
+    "firstname": "Nate",
+    "middlename": "",
+    "lastname": "Bailey",
+    "email": "blstarwars1@gmail.com",
+    "password": "password123",
+    "active": true,
+    "roles": []
+  },
+  {
+    "firstname": "Jack",
+    "middlename": "",
+    "lastname": "Pepperman",
+    "email": "jackiep@email.com",
+    "password": "password123",
+    "active": true,
+    "roles": []
+  },
+  {
+    "firstname": "Jeff",
+    "middlename": "Joe",
+    "lastname": "Brown",
+    "email": "jeffyjoe@email.com",
+    "password": "password123",
+    "active": true,
+    "roles": []
+  },
+  {
+    "firstname": "Sally",
+    "middlename": "",
+    "lastname": "Reverson",
+    "email": "sallyr@email.com",
+    "password": "password123",
+    "active": true,
+    "roles": []
+  }
+]

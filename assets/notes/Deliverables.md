@@ -19,9 +19,45 @@
 >   - Keep track of task statistics 
 >       - time-open (this & on avg)
 >       - time-to-sign-off (this & on avg)
+>   - Structure
+` 
+{
+    // Use built-in id,
+    instruction: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    instructionReferenceId: {
+        type: Schema.Types.ObjectId,
+        references: {
+            model: "checklist",
+            key: "id"
+        }
+    }
+}
+`
+>       - id,
+>       - checklistGroupId
+>       - checklistGroupLineId
+>       - instruction
+>       - instructionReferenceId
+>       - templateReferenceId
+>       - preparedId,
+>       - reviewed,
+>       - finalReview
 > - Sections (Group of Tasks)
 >   - Sequential grouping
 >   - Customizable grouping (Function, Location, Resource, etc.)
+>   - Structure
+`
+{
+    // Use built-in id,
+    checklistGroupLineId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    }
+}
+`
 > - Users
 >   - Manager (Reviews, Sign-off tasks)
 >   - Minion (completes tasks, submit for review)
