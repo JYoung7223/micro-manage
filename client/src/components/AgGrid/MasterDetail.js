@@ -48,6 +48,12 @@ const initialState = {
                     headerName: 'Final Reviewed Date',
                     headerClass: 'rotated-header',
                     maxWidth: 100,
+                    valueFormatter: (params) => {
+                        if(params.value)
+                            return DateTime.fromISO(params.value).toFormat('MM/dd');
+                        else
+                            return '';
+                    },
                     // headerClass: 'rotated-text'
                 },
                 {
@@ -64,6 +70,12 @@ const initialState = {
                     headerName: 'Reviewed Date',
                     headerClass: 'rotated-header',
                     maxWidth: 100,
+                    valueFormatter: (params) => {
+                        if(params.value)
+                            return DateTime.fromISO(params.value).toFormat('MM/dd');
+                        else
+                            return '';
+                    },
                 },
                 {
                     field: 'preparedBy',
@@ -79,6 +91,12 @@ const initialState = {
                     headerName: 'Prepared Date',
                     headerClass: 'rotated-header',
                     maxWidth: 100,
+                    valueFormatter: (params) => {
+                        if(params.value)
+                            return DateTime.fromISO(params.value).toFormat('MM/dd');
+                        else
+                            return '';
+                    },
                     // cellEditor: 'datePicker',
                     // cellClass: 'initial-cell',
                     // minWidth: 100,
@@ -104,7 +122,7 @@ const initialState = {
                 {
                     field: 'lineNumber',
                     headerName: 'Line #',
-                    maxWidth: 100,
+                    maxWidth: 150,
                     sortable: true,
                     // headerClass: 'rotated-header',
                 },
@@ -486,7 +504,6 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
             <div
                 id="myGrid"
                 style={{
-                    height: '100%',
                     width: '100%',
                 }}
                 className="ag-theme-alpine"

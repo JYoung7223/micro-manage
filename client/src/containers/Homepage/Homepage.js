@@ -8,7 +8,7 @@ import ChecklistManagement from "../ChecklistManagment/ChecklistManagement";
 const Homepage = (props) => {
 
 	return (
-		<div className="container">
+		<div className="container-fluid">
 			<ChecklistManagement/>
 		</div>
 	)

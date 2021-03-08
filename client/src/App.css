@@ -7,19 +7,22 @@
   pointer-events: none;
 }
 
-html, body, div#root, div#app {
+html, body, div#root {
   height: 100%;
   width: 100%;
 }
 
 div#app {
-  background-color: grey;
+  height: calc(100% - 59px);
+}
+
+div#app, div.grey-background {
+  background-color: #f4f6f9;
 }
 
 div#app>div.container-fluid {
   height: calc(100% - 60px);
   padding-top: 30px;
-  background-color: white;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -42,6 +45,8 @@ div#app>div.container-fluid {
 .App-link {
   color: #61dafb;
 }
+
+
 
 @keyframes App-logo-spin {
   from {

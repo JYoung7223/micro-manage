@@ -13,6 +13,7 @@ import ListItem from "../List/ListItem";
 import useStickyState from "../../utils/StickyState";
 import {Link} from "react-router-dom";
 import DateTime from "luxon/src/datetime";
+import './ChecklistCard.scss';
 
 const useStyles = makeStyles({
     root: {
@@ -88,33 +89,7 @@ export default function ChecklistCard(props) {
     return (
         <Card className={classes.root}>
             <CardContent>
-                <Typography variant="h5" component="h2">
-                    {
-                        editingTitle ?
-                            <>
-                                <TextField
-                                    id="outlined-basic"
-                                    label="Checklist Title"
-                                    variant="outlined"
-                                    value={checklistTitle}
-                                    onChange={(e) => setChecklistTitle(e.currentTarget.value)}
-                                />
-                                <Button variant="contained" size="small" onClick={e => {
-                                    if(props.id)
-                                        props.updateChecklist(checklistTitle);
-                                    else {
-                                        props.saveChecklist(checklistTitle);
-                                    }
-                                    setEditingTitle(false);
-                                }}>Save Title</Button>
-                            </> :
-                            <>
-                                {checklistTitle}
-                                <Button variant="contained" size="small" onClick={e => {if(!user) return redirectToLogin(); return setEditingTitle(true);}}>Edit Title</Button>
-                            </>
-                    }
-                    <Button variant="contained" size="small" color="secondary" style={{float: 'right'}} onClick={e => {if(!user) return redirectToLogin(); return props.deleteChecklist(props.id)}}>Delete</Button>
-                </Typography>
+
                 <Grid container>
                     {
                         viewChecklists ?
@@ -123,7 +98,8 @@ export default function ChecklistCard(props) {
                                     <Typography variant="h5" component="h5">
                                         {
                                             props.id ?
-                                                <Button variant="contained" size="small" onClick={e => {if(!user) return redirectToLogin(); return setViewChecklists(false);}}>View Template Phases</Button> :
+                                                <button className={'btn btn-secondary standard-format'}
+                                                        onClick={e => {if(!user) return redirectToLogin(); return setViewChecklists(false);}}>View Template Phases</button> :
                                                 ''
                                         }
                                     </Typography>
@@ -167,19 +143,47 @@ export default function ChecklistCard(props) {
                                 </Grid>
                             </> :
                             <>
-                                <Grid item md={10}>
+                                <Grid item md={8} style={ {paddingRight: '5px'} } >
+                                    <Typography variant="h5" component="h2">
+                                        {
+                                            editingTitle ?
+                                                <>
+                                                    <TextField
+                                                        id="outlined-basic"
+                                                        label="Checklist Title"
+                                                        variant="outlined"
+                                                        value={checklistTitle}
+                                                        onChange={(e) => setChecklistTitle(e.currentTarget.value)}
+                                                        style={ {marginBottom: '10px'} }
+                                                    />
+                                                    <button className='btn btn-info standard-format' onClick={e => {
+                                                        if(props.id)
+                                                            props.updateChecklist(checklistTitle);
+                                                        else {
+                                                            props.saveChecklist(checklistTitle);
+                                                        }
+                                                        setEditingTitle(false);
+                                                    }}>Save Title</button>
+                                                </> :
+                                                <>
+                                                    {checklistTitle}
+                                                    <button className={'btn btn-info standard-format'} onClick={e => {if(!user) return redirectToLogin(); return setEditingTitle(true);}}>Update Checklist Title</button>
+                                                    <button className={'btn btn-danger standard-format'} onClick={e => {if(!user) return redirectToLogin(); return props.deleteChecklist(props.id)}}>Delete Checklist</button>
+                                                </>
+                                        }
+                                    </Typography>
                                     <Typography variant="body2" component="div">
                                         {
                                             props.children
                                         }
                                     </Typography>
                                 </Grid>
-                                <Grid item md={2}>
+                                <Grid item md={4}>
                                     <Typography variant="h5" component="h5">
-                                        {`${checklistTitle}(s)`}
+                                        {`${checklistTitle}(s) Statistics`}
                                         {
                                             props.id ?
-                                                <Button variant="contained" size="small" onClick={e => {if(!user) return redirectToLogin(); return setViewChecklists(true);}}>View Checklists</Button> :
+                                                <button className={'btn btn-secondary standard-format'} onClick={e => {if(!user) return redirectToLogin(); return setViewChecklists(true);}}>View Template Copies</button> :
                                                 ''
                                         }
                                     </Typography>
@@ -208,15 +212,15 @@ export default function ChecklistCard(props) {
             <CardActions>
                 {
                     props.canContinue ?
-                        <Button variant="contained" size="small" onClick={e => {if(!user) return redirectToLogin(); return props.continue(props.id)}}>Continue Last</Button> :
+                        <button className={'btn btn-info'} onClick={e => {if(!user) return redirectToLogin(); return props.continue(props.id)}}>Continue Last Copy</button> :
                         ''
                 }
                 {
                     props.canFillOut ?
-                        <Button variant="contained" size="small" onClick={e => {if(!user) return redirectToLogin(); return props.fillOut(props.id)}}>Fill out</Button> :
+                        <button className={'btn btn-success'} onClick={e => {if(!user) return redirectToLogin(); return props.fillOut(props.id)}}>Create a copy of this template</button> :
                         ''
                 }
-                <Button variant="contained" size="small" onClick={e => {if(!user) return redirectToLogin(); return props.update(props.id)}}>Update</Button>
+                <button className={'btn btn-info'} onClick={e => {if(!user) return redirectToLogin(); return props.update(props.id)}}>Update Template</button>
             </CardActions>
         </Card>
     );

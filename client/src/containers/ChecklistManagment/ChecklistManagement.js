@@ -90,7 +90,7 @@ export default function ChecklistManagement() {
         <>
             <Grid container>
                 <Grid item>
-                    <Button variant="contained" size="small" onClick={e => createNewChecklist()}>New Checklist Template</Button>
+                    <button className={'btn btn-success'} style={ {marginBottom: '10px'} } onClick={e => createNewChecklist()}>Create a New Checklist Template</button>
                 </Grid>
             </Grid>
             <List>

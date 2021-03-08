@@ -25,7 +25,7 @@ function App() {
       <Router>
         <div id="app">
           <Nav />
-          <div className={'container-fluid'}>
+          <div className={'container-fluid grey-background'}>
             <Switch>
               {/* What should the homepage be? */}
               <Route exact path="/">
@@ -52,7 +52,7 @@ function App() {
               <Route>{/* <NoMatch /> */}</Route>
             </Switch>
           </div>
-        </div>>
+        </div>
       </Router>
       <Footer />
     </UserContext.Provider>
