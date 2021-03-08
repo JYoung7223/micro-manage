@@ -1,17 +1,24 @@
-import React, {useContext} from "react";
+import React, {useContext, useRef} from "react";
 import { UserContext } from "../../utils/userContext";
 
 function Nav() {
   const userContext = useContext(UserContext);
-  
+  const logoutAudioRef = useRef();
+
   const handleLogout = async (event) => {
     event.preventDefault();
 
     // Animate button click
     // await animateCSS('#login','bounce');
-
-    localStorage.removeItem("user");
-    document.location.replace("/");
+    console.log(logoutAudioRef);
+    logoutAudioRef.current.src="/sounds/hasta-la-vista.mp3";
+    logoutAudioRef.current.play()
+    logoutAudioRef.current.onended=()=>{
+        localStorage.removeItem("user");
+        document.location.replace("/");
+    };
+    
+    
 };
 
   return (
@@ -22,6 +29,7 @@ function Nav() {
       </a>
       {userContext.user ? (
         <>
+          <audio id="logoutAudio" ref={logoutAudioRef}></audio>
           <a className="text-white mx-3" href="/Users/Logout" onClick={handleLogout}>Logout</a>
           <a className="text-white mx-3" href={`/Users/${userContext.user._id}`}>Profile</a>
         </>
