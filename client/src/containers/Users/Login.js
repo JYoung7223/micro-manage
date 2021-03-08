@@ -6,11 +6,19 @@ import {redirectToLogin, redirectToProfile, UserContext} from "../../utils/userC
 function Login(props) {
     const emailRef = useRef();
     const passRef = useRef();
+    const loginAudioRef = useRef();
+    const welcomeAudioRef = useRef();
     const userContext = useContext(UserContext);     
 
     useEffect( () => {
-        if(userContext.user?.id)
+        if(userContext.user?.id){
             return redirectToProfile();
+        }
+        if(loginAudioRef.current){
+            loginAudioRef.current.src="/sounds/letmein.wav";
+            loginAudioRef.current.play();
+        }
+
     }, []);
 
     const handleLogin = async (event) => {
@@ -28,11 +36,13 @@ function Login(props) {
                 }
                 )
                 .then((res)=>{
+                    welcomeAudioRef.current.src="/sounds/hey-you-guys.mp3";
+                    welcomeAudioRef.current.play();
+                    welcomeAudioRef.current.onended=()=>{
+                        document.location.replace("/users/");
+                    };
                     userContext.setUser(res.data);
                     localStorage.setItem("user", JSON.stringify(res.data));                    
-                })
-                .then(()=>{
-                    document.location.replace("/users/");
                 })
                 .catch((error)=>{
                     console.log("Something Happened:",error);
@@ -56,6 +66,8 @@ function Login(props) {
                     <input className="col form-control" type="password" id="password-login" ref={passRef}/>
                 </div>
                 <button className="col btn btn-primary" type="submit" id="login">Login</button>
+                <audio id="loginAudio" ref={loginAudioRef}></audio>
+                <audio id="welcomeAudio" ref={welcomeAudioRef}></audio>
             </form>
             <div className="row">
                 <p>New User? <a href="/users/signup" id="signup">Sign-Up Instead</a></p>

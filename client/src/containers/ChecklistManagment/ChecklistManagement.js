@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState, useRef} from 'react';
 import axios from 'axios';
 import List from '../../components/List/List';
 import ListItem from '../../components/List/ListItem';
@@ -16,7 +16,7 @@ export default function ChecklistManagement() {
     const [allChecklists, setAllChecklists] = useState([]);
     const [checklistTemplates, setChecklistTemplates] = useState([]);
     const [currentChecklists, setCurrentChecklists] = useStickyState([], 'currentChecklist');
-
+    const createChecklistAudioRef = useRef();
     const { user } = useContext(UserContext);
 
     useEffect(() => {
@@ -62,6 +62,11 @@ export default function ChecklistManagement() {
     const createNewChecklist = async() => {
         if(!user)
             return redirectToLogin();
+        // Play what're gonna do today
+        if(createChecklistAudioRef.current){
+            createChecklistAudioRef.current.src = "/sounds/what-you-gonna-do.mp3";
+            createChecklistAudioRef.current.play();
+        }
         setChecklistTemplates([{...newChecklist, owner: user._id}, ...checklistTemplates]);
     }
 
@@ -90,6 +95,7 @@ export default function ChecklistManagement() {
         <>
             <Grid container>
                 <Grid item>
+                    <audio id="createChecklistAudio" ref={createChecklistAudioRef}></audio>
                     <button className={'btn btn-success'} style={ {marginBottom: '10px'} } onClick={e => createNewChecklist()}>Create a New Checklist Template</button>
                 </Grid>
             </Grid>
