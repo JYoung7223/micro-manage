@@ -11,6 +11,7 @@ import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 import './AgGrid.scss';
 import DateTime from "luxon/src/datetime";
 import { v4 as uuidv4 } from 'uuid';
+import API from '../../utils/API'
 
 const now = DateTime.now().toFormat('MM/dd');
 
@@ -23,7 +24,7 @@ const initialState = {
     ],
     columnDefs: [
         { field: 'title', headerName: 'Phases', cellRenderer: 'agGroupCellRenderer', rowDrag: true, },
-        { field: 'order', headerName: 'Line', hide: true },
+        { field: 'lineNumber', headerName: 'Line', hide: true },
     ],
     defaultColDef: {
         flex: 1,
@@ -34,7 +35,7 @@ const initialState = {
         detailGridOptions: {
             columnDefs: [
                 {
-                    field: 'finalReview',
+                    field: 'finalReviewedBy',
                     headerName: 'Final Review',
                     headerClass: 'rotated-header',
                     maxWidth: 100,
@@ -47,10 +48,16 @@ const initialState = {
                     headerName: 'Final Reviewed Date',
                     headerClass: 'rotated-header',
                     maxWidth: 100,
+                    valueFormatter: (params) => {
+                        if(params.value)
+                            return DateTime.fromISO(params.value).toFormat('MM/dd');
+                        else
+                            return '';
+                    },
                     // headerClass: 'rotated-text'
                 },
                 {
-                    field: 'review',
+                    field: 'reviewedBy',
                     headerName: 'Review',
                     headerClass: 'rotated-header',
                     maxWidth: 100,
@@ -63,9 +70,15 @@ const initialState = {
                     headerName: 'Reviewed Date',
                     headerClass: 'rotated-header',
                     maxWidth: 100,
+                    valueFormatter: (params) => {
+                        if(params.value)
+                            return DateTime.fromISO(params.value).toFormat('MM/dd');
+                        else
+                            return '';
+                    },
                 },
                 {
-                    field: 'prepared',
+                    field: 'preparedBy',
                     headerName: 'Prepare',
                     headerClass: 'rotated-header',
                     maxWidth: 100,
@@ -78,6 +91,12 @@ const initialState = {
                     headerName: 'Prepared Date',
                     headerClass: 'rotated-header',
                     maxWidth: 100,
+                    valueFormatter: (params) => {
+                        if(params.value)
+                            return DateTime.fromISO(params.value).toFormat('MM/dd');
+                        else
+                            return '';
+                    },
                     // cellEditor: 'datePicker',
                     // cellClass: 'initial-cell',
                     // minWidth: 100,
@@ -101,9 +120,9 @@ const initialState = {
                     // headerClass: 'rotated-header',
                 },
                 {
-                    field: 'line',
+                    field: 'lineNumber',
                     headerName: 'Line #',
-                    maxWidth: 100,
+                    maxWidth: 150,
                     sortable: true,
                     // headerClass: 'rotated-header',
                 },
@@ -119,15 +138,15 @@ const initialState = {
                 params.columnApi.applyColumnState({
                     state: [
                         {
-                            colId: 'line',
+                            colId: 'lineNumber',
                             sort: 'asc',
                         },
                     ],
                     defaultState: {sort: null},
                 });
             },
-            sortModel: [{field: 'line', sort: 'asc'}],
-            defaultGroupSortComparator: (a,b) => a.line - b.line,
+            sortModel: [{field: 'lineNumber', sort: 'asc'}],
+            defaultGroupSortComparator: (a,b) => a.lineNumber - b.lineNumber,
             defaultColDef: {
                 flex: 1,
                 editable: true,
@@ -135,7 +154,7 @@ const initialState = {
             },
             headerHeight: 150,
             getRowNodeId: row => {
-                return row._id;
+                return row.lineNumber;
             },
             getContextMenuItems: (params) => { },
             onCellValueChanged: (params) => { },
@@ -148,79 +167,45 @@ const initialState = {
             params.successCallback(params.data.tasks);
         },
     },
-    rowData: [
-        {
-            _id: 0,
-            title: 'Phase 1',
-            order: 1,
-            tasks: [
-                {
-                    _id: 1,
-                    finalReview: 'WH',
-                    finalReviewDate: now,
-                    review: 'JY',
-                    reviewDate: now,
-                    prepared: 'WH',
-                    preparedDate: now,
-                    explanationRef: '01.01',
-                    templateRef: '02.01',
-                    mfiRef: '01',
-                    line: 1,
-                    instruction: 'Clean out the dog house',
-                },
-                {
-                    _id: 2,
-                    finalReview: '',
-                    finalReviewDate: '',
-                    review: 'JY',
-                    reviewDate: now,
-                    prepared: 'WH',
-                    preparedDate: now,
-                    explanationRef: '01.01',
-                    templateRef: '02.01',
-                    mfiRef: '02',
-                    line: 2,
-                    instruction: 'Clean out the dog house'
-                },
-                {
-                    _id: 3,
-                    finalReview: '',
-                    finalReviewDate: '',
-                    review: 'JY',
-                    reviewDate: now,
-                    prepared: 'WH',
-                    preparedDate: now,
-                    explanationRef: '01.01',
-                    templateRef: '02.01',
-                    mfiRef: '03',
-                    line: 3,
-                    instruction: 'Clean out the dog house'
-                },
-            ]
-        },
-    ],
 };
 
-const MasterDetailGrid = ( {phases} ) => {
+const MasterDetailGrid = ( {checklist: _checklist} ) => {
+    const [checklist, setChecklist] = useState([]);
     const [data, setData] = useState([]);
     const gridApi = useRef({});
     const gridColumnApi = useRef({});
     const sortActive = useRef(true);
 
     useEffect( () => {
+        let rowData = [];
         //Get the row data
-        let rowData = [...phases];
-        // let rowData = checklist;
+        if(_checklist && _checklist.phases) {
+            // let rowData = checklist;
 
-        //Add the phase id to each task, this will help me know which phase to modify when a
-        //task is modified or a new task is added.
-        rowData.forEach(phase => {
-           phase.tasks.forEach(task => task.phaseId = phase._id)
-        });
+            if(_checklist.phases.length < 1)
+                _checklist.phases.push(createNewPhase(1));
 
+            //Add the phase id to each task, this will help me know which phase to modify when a
+            //task is modified or a new task is added.
+            _checklist.phases.forEach(phase => {
+                phase.tasks.forEach(task => task.phaseId = phase.lineNumber);
+                phase.tasks.sort(sortByLineNumber);
+                rowData.push(phase);
+            });
+        }
+        else
+        {
+            //If there are no phases add one phase row with one task attached
+            let newPhase = createNewPhase(1);
+            rowData = [newPhase];
+            _checklist.phases = rowData;
+        }
+
+        _checklist.phases.sort(sortByLineNumber);
         //Update the state
         setData(rowData);
-    }, [phases]);
+        setChecklist(_checklist);
+    }, [_checklist]);
 
     const onGridReady = (params) => {
         gridApi.current = params.api;
@@ -252,62 +237,88 @@ const MasterDetailGrid = ( {phases} ) => {
                     //If there are tasks that means we are inserting a new phase
                     if(row.tasks)
                     {
-                        let phasesToAdd = [createNewPhase(row.order + 1)];
-                        let phasesToUpdate = rows.filter(phase => phase.order > row.order);
-                        phasesToUpdate.forEach(phase => phase.order++);
+                        let phasesToAdd = [createNewPhase(row.lineNumber + 1)];
+                        let phasesToUpdate = rows.filter(phase => phase.lineNumber > row.lineNumber);
+                        phasesToUpdate.forEach(phase => phase.lineNumber++);
 
-                        setData(rows.concat(phasesToAdd));
+                        // data.push(phasesToAdd[0]);
 
-                        params.api.applyTransaction({
-                            add: phasesToAdd,
-                            update: phasesToUpdate
-                        });
 
-                        //Sort by order
-                        params.columnApi.applyColumnState({
-                            state: [
-                                {
-                                    colId: 'order',
-                                    sort: 'asc',
-                                },
-                            ],
-                            defaultState: {sort: null},
-                        });
+                        params.api.setRowData(rows.concat(phasesToAdd).sort(sortByLineNumber));
+
+                        // updateGridAndSort(params, {add: phasesToAdd, update: phasesToUpdate} );
                     }
                     //Otherwise we are inserting a new task
                     else
                     {
                         //Get the phase that the selected task is apart of
-                        let phase = data.find(phase => phase._id === row.phaseId);
+                        let phase = data.find(phase => phase.lineNumber === row.phaseId);
 
                         //Create the new task
-                        let newTask = createNewTask(row.phaseId, row.line + 1);
+                        let newTask = createNewTask(row.phaseId, row.lineNumber + 1);
 
-                        newTask.phaseId = phase._id;
+                        newTask.phaseId = phase.lineNumber;
                         let tasksToAdd = [newTask];
 
-                            //Get the tasks where their line #s need updated.
-                        let tasksToUpdate = phase.tasks.filter(task => task.line > row.line);
-                        tasksToUpdate.forEach(task => task.line++);
+                        //Get the tasks where their line #s need updated.
+                        let tasksToUpdate = phase.tasks.filter(task => task.lineNumber > row.lineNumber);
+                        tasksToUpdate.forEach(task => task.lineNumber++);
 
+                        // phase.tasks.push(tasksToAdd[0]);
                         phase.tasks = phase.tasks.concat(tasksToAdd);
 
-                        //Update the grid
-                        params.api.applyTransaction({
-                            add: tasksToAdd,
-                            update: tasksToUpdate,
-                        });
 
-                        //Sort by line #
-                        params.columnApi.applyColumnState({
-                            state: [
-                                {
-                                    colId: 'line',
-                                    sort: 'asc',
-                                },
-                            ],
-                            defaultState: {sort: null},
-                        });
+                        params.api.setRowData(phase.tasks.sort(sortByLineNumber));
+                        // updateGridAndSort(params, {add: tasksToAdd, update: tasksToUpdate} );
+                    }
+
+                },
+                cssClasses: ['redFont', 'bold'],
+            },
+            {
+                name: 'Delete',
+                action: function () {
+                    //I'm going to program this assuming that there is a phase_id in each task.
+                    let row = params.node.data;
+                    let rows = [];
+                    params.api.forEachNode( (node) => rows.push(node.data));
+
+                    console.log("phases", rows);
+
+                    //Find where the row should be inserted, first checking whether we are inserting a phase or task
+                    //If there are tasks that means we are inserting a new phase
+                    if(row.tasks)
+                    {
+                        //Re-reference phases
+                        let phasesToUpdate = data.filter(phase => phase.lineNumber > row.lineNumber);
+                        data.splice(row.lineNumber - 1, 1);
+
+                        phasesToUpdate.forEach(phase => phase.lineNumber--);
+
+                        setData(data);
+
+                        params.api.setRowData(data);
+                    }
+                    //Otherwise we are inserting a new task
+                    else
+                    {
+                        //Update the data
+                        //Get the phase
+                        let phase = data.find(phase => phase.lineNumber === row.phaseId);
+
+                        //Remove task from tasks
+                        phase.tasks.splice(row.lineNumber - 1, 1);
+
+                        let tasksToUpdate = rows.filter(task => task.lineNumber > row.lineNumber);
+                        //Decrement the lines that need decremented
+                        tasksToUpdate.forEach(task => task.lineNumber--);
+
+                        setData(data);
+                        console.log('data', data);
+
+                        params.api.setRowData(phase.tasks);
+
+                        // updateGridAndSort(params, {update: tasksToUpdate, remove: [row]} );
                     }
 
                 },
@@ -317,35 +328,54 @@ const MasterDetailGrid = ( {phases} ) => {
         return result;
     };
 
-    const createNewPhase = (order) => {
-        let id = uuidv4();
+    const sortByLineNumber = (a,b) => a.lineNumber - b.lineNumber;
+
+    const updateGridAndSort = (params, {add = [], remove = [], update = []}) => {
+        //Update the grid
+        params.api.applyTransaction({
+            remove,
+            update,
+            add,
+        });
+
+        //Sort by line #
+        params.columnApi.applyColumnState({
+            state: [
+                {
+                    colId: 'lineNumber',
+                    sort: 'asc',
+                },
+            ],
+            defaultState: {sort: null},
+        });
+    };
+
+    const createNewPhase = (lineNumber) => {
         return {
             title: '<Hit enter to enter the title of this phase>',
-            tasks: [createNewTask(id, 1)],
-            order,
-            _id: id,
+            tasks: [createNewTask(lineNumber, 1)],
+            lineNumber,
         }
     };
 
     const getRowNodeId = (row) => {
-        return row._id;
+        return row.lineNumber;
     };
 
-    const createNewTask = (phaseId, line, title) => {
+    const createNewTask = (phaseId, lineNumber, title) => {
         let dt = DateTime.now().toFormat('MM/dd');
         return {
-            finalReview: '',
-            finalReviewDate: '',
-            review: '',
-            reviewDate: '',
-            prepared: '',
+            finalReviewedBy: '',
+            finalReviewedDate: '',
+            reviewedBy: '',
+            reviewedDate: '',
+            preparedBy: '',
             preparedDate: '',
-            explanationRef: '',
-            templateRef: '',
-            mfiRef: '',
-            line: line,
+            explanation: '',
+            template: '',
+            mfi: '',
+            lineNumber: lineNumber,
             phaseId: phaseId,
-            _id: uuidv4(),
             instruction: title || '<Double click or hit enter to enter task instruction / details>',
         }
     };
@@ -357,18 +387,18 @@ const MasterDetailGrid = ( {phases} ) => {
         const movingNode = event.node;
         const overNode = event.overNode;
         const rowNeedsToMove = movingNode !== overNode;
-        if (rowNeedsToMove) {
+        if (rowNeedsToMove && overNode) {
             const movingData = movingNode.data;
             const overData = overNode.data;
-            const fromIndex = rowData.findIndex(row => row._id === movingData._id);
-            const toIndex = rowData.findIndex(row => row._id === overData._id);
+            const fromIndex = rowData.findIndex(row => row.lineNumber === movingData.lineNumber);
+            const toIndex = rowData.findIndex(row => row.lineNumber === overData.lineNumber);
             const newStore = rowData.slice();
             moveInArray(newStore, fromIndex, toIndex);
             newStore.forEach( (row, index) => {
-                if(row.line)
-                    row.line = index + 1;
-                else if(row.order)
-                    row.order = index + 1;
+                if(row.lineNumber)
+                    row.lineNumber = index + 1;
+                else if(row.lineNumber)
+                    row.lineNumber = index + 1;
             });
             // event.api.applyTransaction(newStore);
             event.api.setRowData(newStore);
@@ -394,14 +424,9 @@ const MasterDetailGrid = ( {phases} ) => {
         gridApi.current.setSuppressRowDrag(suppressRowDrag);
     };
 
-    initialState.detailCellRendererParams.detailGridOptions.getContextMenuItems = getContextMenuItems;
-    initialState.detailCellRendererParams.detailGridOptions.onRowDragMove = onRowDragMove;
-    initialState.detailCellRendererParams.detailGridOptions.onSortChanged = onSortChanged;
-
-    initialState.detailCellRendererParams.detailGridOptions.onCellValueChanged = (params) => {
-        console.log("cell value changed", params);
+    const onCellValueChanged = (params) => {
         //If the line # changes we want to move the other line #'s around
-        if(params.colDef.field === 'line')
+        if(params.colDef.field === 'lineNumber')
         {
             let newVal = params.value;
             let oldVal = params.oldValue;
@@ -414,23 +439,25 @@ const MasterDetailGrid = ( {phases} ) => {
                     newVal = siblings.length;
 
                 siblings.forEach(sibling => {
-                    if (sibling.line > oldVal && sibling.line <= newVal)
-                        sibling.line--;
+                    if (sibling.lineNumber > oldVal && sibling.lineNumber <= newVal)
+                        sibling.lineNumber--;
                 });
             }
             else if(oldVal > newVal) {
                 if(newVal < 1)
                     newVal = 1;
                 siblings.forEach(sibling => {
-                    if (sibling.line < oldVal && sibling.line >= newVal)
-                        sibling.line++;
+                    if (sibling.lineNumber < oldVal && sibling.lineNumber >= newVal)
+                        sibling.lineNumber++;
                 });
             }
 
             //Update the row
             let row = params.node.data;
-            row.line = newVal;
+            row.lineNumber = newVal;
             siblings.push(row);
+
+            // params.api.setRowData(siblings);
 
             params.api.applyTransaction({
                 update: siblings
@@ -440,7 +467,7 @@ const MasterDetailGrid = ( {phases} ) => {
             params.columnApi.applyColumnState({
                 state: [
                     {
-                        colId: 'line',
+                        colId: 'lineNumber',
                         sort: 'asc',
                     },
                 ],
@@ -449,12 +476,34 @@ const MasterDetailGrid = ( {phases} ) => {
         }
     };
 
+    initialState.detailCellRendererParams.detailGridOptions.getContextMenuItems = getContextMenuItems;
+    initialState.detailCellRendererParams.detailGridOptions.onRowDragMove = onRowDragMove;
+    initialState.detailCellRendererParams.detailGridOptions.onSortChanged = onSortChanged;
+    initialState.detailCellRendererParams.detailGridOptions.onCellValueChanged = onCellValueChanged;
+
+    const saveClicked = () => {
+        //Get the phases from the grid
+        //Get the checklist data, check the rowData and see if it has the updates
+        let phases = [];
+        gridApi.current.forEachNode(node => phases.push(node.data));
+        checklist.phases = phases;
+
+        //Call api to submit the checklist data
+        API.updateChecklist(checklist._id, checklist);
+    };
+
     return (
-        <div style={{ width: '100%', height: 'calc(100% - 50px)' }}>
+        <div style={{ width: '100%', height: 'calc(100% - 50px)', textAlign: 'end' }}>
+            <button
+                className="btn btn-primary"
+                style={ {marginBottom: '5px'} }
+                onClick={saveClicked}
+            >
+                Save
+            </button>
             <div
                 id="myGrid"
                 style={{
-                    height: '100%',
                     width: '100%',
                 }}
                 className="ag-theme-alpine"
@@ -467,6 +516,8 @@ const MasterDetailGrid = ( {phases} ) => {
                     stopEditingWhenGridLosesFocus={true}
                     onRowDragMove={onRowDragMove}
                     onSortChanged={onSortChanged}
+                    detailRowAutoHeight={true}
+                    // onCellValueChanged={onCellValueChanged}
                     // rowDragManaged={true}
                     // defaultSortColumn={'order'}
                     sortModel={[{field: 'order', sort: 'asc'}]}
@@ -483,30 +534,4 @@ const MasterDetailGrid = ( {phases} ) => {
     );
 };
 
-export default MasterDetailGrid
-
-// function getDatePicker() {
-//     function Datepicker() {}
-//     Datepicker.prototype.init = function (params) {
-//         this.eInput = document.createElement('input');
-//         this.eInput.value = params.value;
-//         this.eInput.classList.add('ag-input');
-//         this.eInput.style.height = '100%';
-//         $(this.eInput).datepicker({ dateFormat: 'dd/mm/yy' });
-//     };
-//     Datepicker.prototype.getGui = function () {
-//         return this.eInput;
-//     };
-//     Datepicker.prototype.afterGuiAttached = function () {
-//         this.eInput.focus();
-//         this.eInput.select();
-//     };
-//     Datepicker.prototype.getValue = function () {
-//         return this.eInput.value;
-//     };
-//     Datepicker.prototype.destroy = function () {};
-//     Datepicker.prototype.isPopup = function () {
-//         return false;
-//     };
-//     return Datepicker;
-// }
+export default MasterDetailGrid;

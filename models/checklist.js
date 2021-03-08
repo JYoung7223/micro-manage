@@ -10,13 +10,14 @@ const taskSchema = new Schema({
   preparedDate: Date,
   explanation: String,
   template: String,
-  mfiRef: String,
+  mfi: String,
   lineNumber: Number,
   instruction: String,
 });
 
 const phaseSchema = new Schema({
   title: String,
+  lineNumber: Number,
   tasks: [taskSchema],
 });
 
@@ -25,6 +26,7 @@ const checklistSchema = new Schema({
   owner: { type: String, required: true },
   reference: String,
   created_date: { type: Date, default: Date.now },
+  template: String,
   phases: [phaseSchema],
 });
 
