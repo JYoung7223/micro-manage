@@ -218,9 +218,15 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
             //Add the phase id to each task, this will help me know which phase to modify when a
             //task is modified or a new task is added.
             _checklist.phases.forEach(phase => {
-                phase.tasks.forEach(task => task.phaseId = phase.lineNumber);
+                phase.tasks.forEach(task => task.phaseId = phase._id);
                 rowData.push(phase);
             });
+        }
+        else
+        {
+            //If there are no phases add one phase row with one task attached
+            let newPhase = createNewPhase(1);
+            rowData = [newPhase];
         }
 
         //Update the state
@@ -258,62 +264,85 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
                     //If there are tasks that means we are inserting a new phase
                     if(row.tasks)
                     {
-                        let phasesToAdd = [createNewPhase(row.order + 1)];
-                        let phasesToUpdate = rows.filter(phase => phase.order > row.order);
-                        phasesToUpdate.forEach(phase => phase.order++);
+                        let phasesToAdd = [createNewPhase(row.lineNumber + 1)];
+                        let phasesToUpdate = rows.filter(phase => phase.lineNumber > row.lineNumber);
+                        phasesToUpdate.forEach(phase => phase.lineNumber++);
 
-                        setData(rows.concat(phasesToAdd));
+                        data.push(phasesToAdd[0]);
 
-                        params.api.applyTransaction({
-                            add: phasesToAdd,
-                            update: phasesToUpdate
-                        });
+                        // setData(rows.concat(phasesToAdd));
 
-                        //Sort by order
-                        params.columnApi.applyColumnState({
-                            state: [
-                                {
-                                    colId: 'order',
-                                    sort: 'asc',
-                                },
-                            ],
-                            defaultState: {sort: null},
-                        });
+                        updateGridAndSort(params, {add: phasesToAdd, update: phasesToUpdate} );
                     }
                     //Otherwise we are inserting a new task
                     else
                     {
                         //Get the phase that the selected task is apart of
-                        let phase = data.find(phase => phase.lineNumber === row.phaseId);
+                        let phase = data.find(phase => phase._id === row.phaseId);
 
                         //Create the new task
                         let newTask = createNewTask(row.phaseId, row.lineNumber + 1);
 
-                        newTask.phaseId = phase.lineNumber;
+                        newTask.phaseId = phase._id;
                         let tasksToAdd = [newTask];
 
-                            //Get the tasks where their line #s need updated.
+                        //Get the tasks where their line #s need updated.
                         let tasksToUpdate = phase.tasks.filter(task => task.lineNumber > row.lineNumber);
                         tasksToUpdate.forEach(task => task.lineNumber++);
 
-                        phase.tasks = phase.tasks.concat(tasksToAdd);
+                        phase.tasks.push(tasksToAdd[0]);
+                        // phase.tasks = phase.tasks.concat(tasksToAdd);
 
-                        //Update the grid
-                        params.api.applyTransaction({
-                            add: tasksToAdd,
-                            update: tasksToUpdate,
-                        });
+                        updateGridAndSort(params, {add: tasksToAdd, update: tasksToUpdate} );
+                    }
 
-                        //Sort by line #
-                        params.columnApi.applyColumnState({
-                            state: [
-                                {
-                                    colId: 'lineNumber',
-                                    sort: 'asc',
-                                },
-                            ],
-                            defaultState: {sort: null},
-                        });
+                },
+                cssClasses: ['redFont', 'bold'],
+            },
+            {
+                name: 'Delete',
+                action: function () {
+                    //I'm going to program this assuming that there is a phase_id in each task.
+                    let row = params.node.data;
+                    let rows = [];
+                    params.api.forEachNode( (node) => rows.push(node.data));
+
+                    console.log("phases", rows);
+
+                    //Find where the row should be inserted, first checking whether we are inserting a phase or task
+                    //If there are tasks that means we are inserting a new phase
+                    if(row.tasks)
+                    {
+                        //Re-reference phases
+                        let phasesToUpdate = data.filter(phase => phase.lineNumber > row.lineNumber);
+                        data.splice(row.lineNumber - 1, 1);
+
+                        phasesToUpdate.forEach(phase => phase.lineNumber--);
+
+                        setData(data);
+
+                        params.api.setRowData(data);
+                    }
+                    //Otherwise we are inserting a new task
+                    else
+                    {
+                        //Update the data
+                        //Get the phase
+                        let phase = data.find(phase => phase._id === row.phaseId);
+
+                        //Remove task from tasks
+                        phase.tasks.splice(row.lineNumber - 1, 1);
+
+                        let tasksToUpdate = rows.filter(task => task.lineNumber > row.lineNumber);
+                        //Decrement the lines that need decremented
+                        tasksToUpdate.forEach(task => task.lineNumber--);
+
+                        setData(data);
+                        console.log('data', data);
+
+                        params.api.setRowData(phase.tasks);
+
+                        // updateGridAndSort(params, {update: tasksToUpdate, remove: [row]} );
                     }
 
                 },
@@ -321,6 +350,26 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
             },
         ];
         return result;
+    };
+
+    const updateGridAndSort = (params, {add = [], remove = [], update = []}) => {
+        //Update the grid
+        params.api.applyTransaction({
+            remove,
+            update,
+            add,
+        });
+
+        //Sort by line #
+        params.columnApi.applyColumnState({
+            state: [
+                {
+                    colId: 'lineNumber',
+                    sort: 'asc',
+                },
+            ],
+            defaultState: {sort: null},
+        });
     };
 
     const createNewPhase = (lineNumber) => {
@@ -333,21 +382,21 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
     };
 
     const getRowNodeId = (row) => {
-        return row.lineNumber;
+        return row._id;
     };
 
     const createNewTask = (phaseId, lineNumber, title) => {
         let dt = DateTime.now().toFormat('MM/dd');
         return {
-            finalReview: '',
-            finalReviewDate: '',
-            review: '',
-            reviewDate: '',
-            prepared: '',
+            finalReviewedBy: '',
+            finalReviewedDate: '',
+            reviewedBy: '',
+            reviewedDate: '',
+            preparedBy: '',
             preparedDate: '',
-            explanationRef: '',
-            templateRef: '',
-            mfiRef: '',
+            explanation: '',
+            template: '',
+            mfi: '',
             lineNumber: lineNumber,
             phaseId: phaseId,
             instruction: title || '<Double click or hit enter to enter task instruction / details>',
@@ -459,7 +508,7 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
         checklist.phases = phases;
 
         //Call api tto submit the checklist data
-        API.saveChecklist(checklist);
+        API.updateChecklist(checklist._id, checklist);
     };
 
     return (
@@ -487,6 +536,7 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
                     stopEditingWhenGridLosesFocus={true}
                     onRowDragMove={onRowDragMove}
                     onSortChanged={onSortChanged}
+                    detailRowAutoHeight={true}
                     // rowDragManaged={true}
                     // defaultSortColumn={'order'}
                     sortModel={[{field: 'order', sort: 'asc'}]}
@@ -503,30 +553,4 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
     );
 };
 
-export default MasterDetailGrid
-
-// function getDatePicker() {
-//     function Datepicker() {}
-//     Datepicker.prototype.init = function (params) {
-//         this.eInput = document.createElement('input');
-//         this.eInput.value = params.value;
-//         this.eInput.classList.add('ag-input');
-//         this.eInput.style.height = '100%';
-//         $(this.eInput).datepicker({ dateFormat: 'dd/mm/yy' });
-//     };
-//     Datepicker.prototype.getGui = function () {
-//         return this.eInput;
-//     };
-//     Datepicker.prototype.afterGuiAttached = function () {
-//         this.eInput.focus();
-//         this.eInput.select();
-//     };
-//     Datepicker.prototype.getValue = function () {
-//         return this.eInput.value;
-//     };
-//     Datepicker.prototype.destroy = function () {};
-//     Datepicker.prototype.isPopup = function () {
-//         return false;
-//     };
-//     return Datepicker;
-// }
+export default MasterDetailGrid;

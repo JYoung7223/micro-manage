@@ -22,8 +22,8 @@ async function saveChecklist(checklist) {
     return await axios.post('/api/checklists/', checklist);
 }
 
-async function updateChecklist(checklist) {
-    return await axios.put('/api/checklists/', checklist);
+async function updateChecklist(id, checklist) {
+    return await axios.put('/api/checklists/' + id, checklist);
 }
 
 async function deleteChecklist(checklistId) {

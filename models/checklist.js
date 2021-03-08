@@ -10,7 +10,7 @@ const taskSchema = new Schema({
   preparedDate: Date,
   explanation: String,
   template: String,
-  mfiRef: String,
+  mfi: String,
   lineNumber: Number,
   instruction: String,
 });

@@ -25,9 +25,10 @@ module.exports = {
       });
   },
   update: function(req, res) {
-
+    console.log('req params', req.params);
+    console.log('req body', req.body);
     db.Checklist
-      .findOneAndUpdate({ _id: req.params.id }, req.body)
+      .findOneAndUpdate({ _id: req.body._id }, req.body)
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
