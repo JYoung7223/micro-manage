@@ -44,7 +44,7 @@ export default function ChecklistManagement() {
         delete newChecklist.created_date;
         newChecklist.template = id;
 
-        newChecklist = await saveChecklist(newChecklist);
+        newChecklist = await API.saveChecklist(newChecklist);
 
         setCurrentChecklists([...currentChecklists, newChecklist]);
 
@@ -71,6 +71,7 @@ export default function ChecklistManagement() {
         const newChecklist = await API.saveChecklist(checklist);
 
         getChecklists();
+        goToUpdateChecklist(newChecklist._id);
         return newChecklist;
     };
 
@@ -89,7 +90,7 @@ export default function ChecklistManagement() {
         <>
             <Grid container>
                 <Grid item>
-                    <Button variant="contained" size="small" onClick={e => createNewChecklist()}>New Checklist</Button>
+                    <Button variant="contained" size="small" onClick={e => createNewChecklist()}>New Checklist Template</Button>
                 </Grid>
             </Grid>
             <List>

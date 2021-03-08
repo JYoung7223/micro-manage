@@ -10,6 +10,9 @@ import {redirectToLogin, UserContext} from "../../utils/userContext";
 import Grid from "@material-ui/core/Grid";
 import List from "../List/List";
 import ListItem from "../List/ListItem";
+import useStickyState from "../../utils/StickyState";
+import {Link} from "react-router-dom";
+import DateTime from "luxon/src/datetime";
 
 const useStyles = makeStyles({
     root: {
@@ -38,6 +41,7 @@ export default function ChecklistCard(props) {
     const [finalReviewChecklists, setFinalReviewChecklists] = useState([]);
     const [reviewChecklists, setReviewChecklists] = useState([]);
     const [inProgressChecklists, setInProgressChecklists] = useState([]);
+    const [viewChecklists, setViewChecklists] = useStickyState(false, 'view-' + props.id);
 
     useEffect(() => {
         getChecklistStatus();
@@ -73,7 +77,7 @@ export default function ChecklistCard(props) {
                 return;
             }
 
-            if(prepareTasks.length === allTasks.length)
+            if(prepareTasks.length <= allTasks.length)
             {
                 setInProgressChecklists([...inProgressChecklists, ck]);
                 return;
@@ -98,8 +102,9 @@ export default function ChecklistCard(props) {
                                 <Button variant="contained" size="small" onClick={e => {
                                     if(props.id)
                                         props.updateChecklist(checklistTitle);
-                                    else
+                                    else {
                                         props.saveChecklist(checklistTitle);
+                                    }
                                     setEditingTitle(false);
                                 }}>Save Title</Button>
                             </> :
@@ -111,33 +116,93 @@ export default function ChecklistCard(props) {
                     <Button variant="contained" size="small" color="secondary" style={{float: 'right'}} onClick={e => {if(!user) return redirectToLogin(); return props.deleteChecklist(props.id)}}>Delete</Button>
                 </Typography>
                 <Grid container>
-                    <Grid item md={10}>
-                        <Typography variant="body2" component="div">
-                            {props.children}
-                        </Typography>
-                    </Grid>
-                    <Grid item md={2}>
-                        <Typography variant="h5" component="h5">
-                            {`${checklistTitle}(s)`}
-                        </Typography>
-                        <List>
-                            <ListItem>
-                                <em>Total:</em> {props.checklists.length}
-                            </ListItem>
-                            <ListItem>
-                                <em>Complete:</em> {completeChecklists.length}
-                            </ListItem>
-                            <ListItem>
-                                <em>Ready for Final Review:</em> {finalReviewChecklists.length}
-                            </ListItem>
-                            <ListItem>
-                                <em>Ready for Review:</em> {reviewChecklists.length}
-                            </ListItem>
-                            <ListItem>
-                                <em>In Progress:</em> {inProgressChecklists.length}
-                            </ListItem>
-                        </List>
-                    </Grid>
+                    {
+                        viewChecklists ?
+                            <>
+                                <Grid item md={12}>
+                                    <Typography variant="h5" component="h5">
+                                        {
+                                            props.id ?
+                                                <Button variant="contained" size="small" onClick={e => {if(!user) return redirectToLogin(); return setViewChecklists(false);}}>View Template Phases</Button> :
+                                                ''
+                                        }
+                                    </Typography>
+                                    <List>
+                                        <ListItem>
+                                            <em>Total:</em> {props.checklists.length}
+                                        </ListItem>
+                                        <ListItem>
+                                            <em>Complete:</em> {completeChecklists.length}
+                                            <List>
+                                                {completeChecklists.map(ck => {
+                                                    return <ListItem><Link to={"/checklist/" + ck._id}>{ck.title + ' Created on ' + DateTime.fromISO(ck.created_date).toFormat('LLL dd yyyy HH:mm')}</Link></ListItem>;
+                                                })}
+                                            </List>
+                                        </ListItem>
+                                        <ListItem>
+                                            <em>Ready for Final Review:</em> {finalReviewChecklists.length}
+                                            <List>
+                                                {finalReviewChecklists.map(ck => {
+                                                    return <ListItem><Link to={"/checklist/" + ck._id}>{ck.title + ' Created on ' + DateTime.fromISO(ck.created_date).toFormat('LLL dd yyyy HH:mm')}</Link></ListItem>;
+                                                })}
+                                            </List>
+                                        </ListItem>
+                                        <ListItem>
+                                            <em>Ready for Review:</em> {reviewChecklists.length}
+                                            <List>
+                                                {reviewChecklists.map(ck => {
+                                                    return <ListItem><Link to={"/checklist/" + ck._id}>{ck.title + ' Created on ' + DateTime.fromISO(ck.created_date).toFormat('LLL dd yyyy HH:mm')}</Link></ListItem>;
+                                                })}
+                                            </List>
+                                        </ListItem>
+                                        <ListItem>
+                                            <em>In Progress:</em> {inProgressChecklists.length}
+                                            <List>
+                                                {inProgressChecklists.map(ck => {
+                                                    return <ListItem><Link to={"/checklist/" + ck._id}>{ck.title + ' Created on ' + DateTime.fromISO(ck.created_date).toFormat('LLL dd yyyy HH:mm')}</Link></ListItem>;
+                                                })}
+                                            </List>
+                                        </ListItem>
+                                    </List>
+                                </Grid>
+                            </> :
+                            <>
+                                <Grid item md={10}>
+                                    <Typography variant="body2" component="div">
+                                        {
+                                            props.children
+                                        }
+                                    </Typography>
+                                </Grid>
+                                <Grid item md={2}>
+                                    <Typography variant="h5" component="h5">
+                                        {`${checklistTitle}(s)`}
+                                        {
+                                            props.id ?
+                                                <Button variant="contained" size="small" onClick={e => {if(!user) return redirectToLogin(); return setViewChecklists(true);}}>View Checklists</Button> :
+                                                ''
+                                        }
+                                    </Typography>
+                                    <List>
+                                        <ListItem>
+                                            <em>Total:</em> {props.checklists.length}
+                                        </ListItem>
+                                        <ListItem>
+                                            <em>Complete:</em> {completeChecklists.length}
+                                        </ListItem>
+                                        <ListItem>
+                                            <em>Ready for Final Review:</em> {finalReviewChecklists.length}
+                                        </ListItem>
+                                        <ListItem>
+                                            <em>Ready for Review:</em> {reviewChecklists.length}
+                                        </ListItem>
+                                        <ListItem>
+                                            <em>In Progress:</em> {inProgressChecklists.length}
+                                        </ListItem>
+                                    </List>
+                                </Grid>
+                            </>
+                    }
                 </Grid>
             </CardContent>
             <CardActions>

@@ -35,7 +35,7 @@ const initialState = {
         detailGridOptions: {
             columnDefs: [
                 {
-                    field: 'finalReview',
+                    field: 'finalReviewedBy',
                     headerName: 'Final Review',
                     headerClass: 'rotated-header',
                     maxWidth: 100,
@@ -51,7 +51,7 @@ const initialState = {
                     // headerClass: 'rotated-text'
                 },
                 {
-                    field: 'review',
+                    field: 'reviewedBy',
                     headerName: 'Review',
                     headerClass: 'rotated-header',
                     maxWidth: 100,
@@ -66,7 +66,7 @@ const initialState = {
                     maxWidth: 100,
                 },
                 {
-                    field: 'prepared',
+                    field: 'preparedBy',
                     headerName: 'Prepare',
                     headerClass: 'rotated-header',
                     maxWidth: 100,
