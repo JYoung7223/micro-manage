@@ -212,7 +212,7 @@ export default function ChecklistCard(props) {
             <CardActions>
                 {
                     props.canContinue ?
-                        <button className={'btn btn-info'} onClick={e => {if(!user) return redirectToLogin(); return props.continue(props.id)}}>Continue Last Copy</button> :
+                        <button className={'btn btn-info'} onClick={e => {if(!user) return redirectToLogin(); return props.continue(props.id)}}>Open Last Created Copy</button> :
                         ''
                 }
                 {

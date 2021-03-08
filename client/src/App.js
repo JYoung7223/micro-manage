@@ -10,6 +10,7 @@ import { Login } from "./containers/Users/Login";
 import { Signup } from "./containers/Users/Signup";
 import { Footer } from "./components/Footer";
 import { UserContext } from "./utils/userContext";
+import Introduction from "./components/Introduction/Introduction";
 
 function App() {
 
@@ -25,12 +26,15 @@ function App() {
       <Router>
         <div id="app">
           <Nav />
-          <div className={'container-fluid grey-background'}>
+          <div id="page" className={'container-fluid grey-background'}>
             <Switch>
               {/* What should the homepage be? */}
               <Route exact path="/">
-                <Homepage />
+                <Introduction />
               </Route>
+                <Route exact path="/checklist-management">
+                    <Homepage />
+                </Route>
               <Route exact path="/checklist/:id">
                 <Checklist />
               </Route>

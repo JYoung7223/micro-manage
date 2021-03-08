@@ -54,7 +54,7 @@ const Checklist = ( {props} ) => {
     //Other Methods
 
     return (
-		<div style={ {height: '100%'} }>
+		<div style={ {height: '100%', padding: '30px 15px 0px 15px'} }>
 			<h2 style={ {textAlign: 'center', marginBottom: '0px'} }>
 				Checklist: {checklist.title}
 			</h2>
