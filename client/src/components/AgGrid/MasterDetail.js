@@ -183,6 +183,7 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
             _checklist.phases = rowData;
         }
 
+        _checklist.phases.sort(sortByLineNumber);
         //Update the state
         setData(rowData);
         setChecklist(_checklist);
@@ -224,9 +225,10 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
 
                         // data.push(phasesToAdd[0]);
 
-                        setData(rows.concat(phasesToAdd));
 
-                        updateGridAndSort(params, {add: phasesToAdd, update: phasesToUpdate} );
+                        params.api.setRowData(rows.concat(phasesToAdd).sort(sortByLineNumber));
+
+                        // updateGridAndSort(params, {add: phasesToAdd, update: phasesToUpdate} );
                     }
                     //Otherwise we are inserting a new task
                     else
@@ -436,6 +438,8 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
             let row = params.node.data;
             row.lineNumber = newVal;
             siblings.push(row);
+
+            // params.api.setRowData(siblings);
 
             params.api.applyTransaction({
                 update: siblings
