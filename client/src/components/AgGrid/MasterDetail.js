@@ -149,57 +149,6 @@ const initialState = {
             params.successCallback(params.data.tasks);
         },
     },
-    rowData: [
-        {
-            _id: 0,
-            title: 'Phase 1',
-            order: 1,
-            tasks: [
-                {
-                    _id: 1,
-                    finalReview: 'WH',
-                    finalReviewDate: now,
-                    review: 'JY',
-                    reviewDate: now,
-                    prepared: 'WH',
-                    preparedDate: now,
-                    explanationRef: '01.01',
-                    templateRef: '02.01',
-                    mfiRef: '01',
-                    lineNumber: 1,
-                    instruction: 'Clean out the dog house',
-                },
-                {
-                    _id: 2,
-                    finalReview: '',
-                    finalReviewDate: '',
-                    review: 'JY',
-                    reviewDate: now,
-                    prepared: 'WH',
-                    preparedDate: now,
-                    explanationRef: '01.01',
-                    templateRef: '02.01',
-                    mfiRef: '02',
-                    lineNumber: 2,
-                    instruction: 'Clean out the dog house'
-                },
-                {
-                    _id: 3,
-                    finalReview: '',
-                    finalReviewDate: '',
-                    review: 'JY',
-                    reviewDate: now,
-                    prepared: 'WH',
-                    preparedDate: now,
-                    explanationRef: '01.01',
-                    templateRef: '02.01',
-                    mfiRef: '03',
-                    lineNumber: 3,
-                    instruction: 'Clean out the dog house'
-                },
-            ]
-        },
-    ],
 };
 
 const MasterDetailGrid = ( {checklist: _checklist} ) => {
@@ -215,10 +164,14 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
         if(_checklist && _checklist.phases) {
             // let rowData = checklist;
 
+            if(_checklist.phases.length < 1)
+                _checklist.phases.push(createNewPhase(1));
+
             //Add the phase id to each task, this will help me know which phase to modify when a
             //task is modified or a new task is added.
             _checklist.phases.forEach(phase => {
-                phase.tasks.forEach(task => task.phaseId = phase._id);
+                phase.tasks.forEach(task => task.phaseId = phase.lineNumber);
+                phase.tasks.sort(sortByLineNumber);
                 rowData.push(phase);
             });
         }
@@ -227,6 +180,7 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
             //If there are no phases add one phase row with one task attached
             let newPhase = createNewPhase(1);
             rowData = [newPhase];
+            _checklist.phases = rowData;
         }
 
         //Update the state
@@ -268,9 +222,9 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
                         let phasesToUpdate = rows.filter(phase => phase.lineNumber > row.lineNumber);
                         phasesToUpdate.forEach(phase => phase.lineNumber++);
 
-                        data.push(phasesToAdd[0]);
+                        // data.push(phasesToAdd[0]);
 
-                        // setData(rows.concat(phasesToAdd));
+                        setData(rows.concat(phasesToAdd));
 
                         updateGridAndSort(params, {add: phasesToAdd, update: phasesToUpdate} );
                     }
@@ -278,22 +232,24 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
                     else
                     {
                         //Get the phase that the selected task is apart of
-                        let phase = data.find(phase => phase._id === row.phaseId);
+                        let phase = data.find(phase => phase.lineNumber === row.phaseId);
 
                         //Create the new task
                         let newTask = createNewTask(row.phaseId, row.lineNumber + 1);
 
-                        newTask.phaseId = phase._id;
+                        newTask.phaseId = phase.lineNumber;
                         let tasksToAdd = [newTask];
 
                         //Get the tasks where their line #s need updated.
                         let tasksToUpdate = phase.tasks.filter(task => task.lineNumber > row.lineNumber);
                         tasksToUpdate.forEach(task => task.lineNumber++);
 
-                        phase.tasks.push(tasksToAdd[0]);
-                        // phase.tasks = phase.tasks.concat(tasksToAdd);
+                        // phase.tasks.push(tasksToAdd[0]);
+                        phase.tasks = phase.tasks.concat(tasksToAdd);
 
-                        updateGridAndSort(params, {add: tasksToAdd, update: tasksToUpdate} );
+
+                        params.api.setRowData(phase.tasks.sort(sortByLineNumber));
+                        // updateGridAndSort(params, {add: tasksToAdd, update: tasksToUpdate} );
                     }
 
                 },
@@ -328,7 +284,7 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
                     {
                         //Update the data
                         //Get the phase
-                        let phase = data.find(phase => phase._id === row.phaseId);
+                        let phase = data.find(phase => phase.lineNumber === row.phaseId);
 
                         //Remove task from tasks
                         phase.tasks.splice(row.lineNumber - 1, 1);
@@ -352,6 +308,8 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
         return result;
     };
 
+    const sortByLineNumber = (a,b) => a.lineNumber - b.lineNumber;
+
     const updateGridAndSort = (params, {add = [], remove = [], update = []}) => {
         //Update the grid
         params.api.applyTransaction({
@@ -373,16 +331,15 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
     };
 
     const createNewPhase = (lineNumber) => {
-        let id = uuidv4();
         return {
             title: '<Hit enter to enter the title of this phase>',
-            tasks: [createNewTask(id, 1)],
+            tasks: [createNewTask(lineNumber, 1)],
             lineNumber,
         }
     };
 
     const getRowNodeId = (row) => {
-        return row._id;
+        return row.lineNumber;
     };
 
     const createNewTask = (phaseId, lineNumber, title) => {
@@ -410,7 +367,7 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
         const movingNode = event.node;
         const overNode = event.overNode;
         const rowNeedsToMove = movingNode !== overNode;
-        if (rowNeedsToMove) {
+        if (rowNeedsToMove && overNode) {
             const movingData = movingNode.data;
             const overData = overNode.data;
             const fromIndex = rowData.findIndex(row => row.lineNumber === movingData.lineNumber);
@@ -447,12 +404,7 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
         gridApi.current.setSuppressRowDrag(suppressRowDrag);
     };
 
-    initialState.detailCellRendererParams.detailGridOptions.getContextMenuItems = getContextMenuItems;
-    initialState.detailCellRendererParams.detailGridOptions.onRowDragMove = onRowDragMove;
-    initialState.detailCellRendererParams.detailGridOptions.onSortChanged = onSortChanged;
-
-    initialState.detailCellRendererParams.detailGridOptions.onCellValueChanged = (params) => {
-        console.log("cell value changed", params);
+    const onCellValueChanged = (params) => {
         //If the line # changes we want to move the other line #'s around
         if(params.colDef.field === 'lineNumber')
         {
@@ -502,12 +454,19 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
         }
     };
 
+    initialState.detailCellRendererParams.detailGridOptions.getContextMenuItems = getContextMenuItems;
+    initialState.detailCellRendererParams.detailGridOptions.onRowDragMove = onRowDragMove;
+    initialState.detailCellRendererParams.detailGridOptions.onSortChanged = onSortChanged;
+    initialState.detailCellRendererParams.detailGridOptions.onCellValueChanged = onCellValueChanged;
+
     const saveClicked = () => {
+        //Get the phases from the grid
         //Get the checklist data, check the rowData and see if it has the updates
-        let phases = data;
+        let phases = [];
+        gridApi.current.forEachNode(node => phases.push(node.data));
         checklist.phases = phases;
 
-        //Call api tto submit the checklist data
+        //Call api to submit the checklist data
         API.updateChecklist(checklist._id, checklist);
     };
 
@@ -537,6 +496,7 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
                     onRowDragMove={onRowDragMove}
                     onSortChanged={onSortChanged}
                     detailRowAutoHeight={true}
+                    // onCellValueChanged={onCellValueChanged}
                     // rowDragManaged={true}
                     // defaultSortColumn={'order'}
                     sortModel={[{field: 'order', sort: 'asc'}]}
