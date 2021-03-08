@@ -9,7 +9,6 @@ const taskSchema = new Schema({
   preparedBy: String,
   preparedDate: Date,
   explanation: String,
-  template: String,
   mfiRef: String,
   lineNumber: Number,
   instruction: String,
@@ -26,6 +25,7 @@ const checklistSchema = new Schema({
   owner: { type: String, required: true },
   reference: String,
   created_date: { type: Date, default: Date.now },
+  template: String,
   phases: [phaseSchema],
 });
 
