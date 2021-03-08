@@ -24,6 +24,14 @@
     font-size:1.5rem;
     font-weight:bold;
 }
+.bg-company-primary{
+    background:var(--primary-company-color);
+    color: whitesmoke;
+}
+.bg-company-secondary{
+    background:var(--secondary-company-color);
+    color: whitesmoke;
+}
 .text-company-primary{
     color:var(--primary-company-color);
     text-shadow: 1px 1px #FFFFFF;
@@ -31,6 +39,9 @@
 .text-company-secondary{
     color:var(--secondary-company-color);
     text-shadow: 1px 1px #FFFFFF;
+}
+.text-end{
+    text-align:right;
 }
 .navbar img{
     width:1rem;

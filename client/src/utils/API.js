@@ -12,6 +12,15 @@ function updateUser(id, userData){
     return axios.put(`/api/users/${id}`,userData);
 }
 
+function viewUsers(){
+  return axios.get(`/api/users/`);
+}
+
+function viewUser(id){
+  console.log("Requesting:",`/api/users/${id}`);
+  return axios.get(`/api/users/${id}`);
+}
+
 async function getChecklists() {
     return await axios.get('/api/checklists');
 }
@@ -33,6 +42,8 @@ export default {
    loginUser,
    createUser,
    updateUser,
+   viewUsers,
+   viewUser,
    updateChecklist,
    getChecklists,
    saveChecklist,
