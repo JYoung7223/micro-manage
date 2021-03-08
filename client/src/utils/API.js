@@ -9,12 +9,20 @@ function createUser(userData){
 }
 
 function updateUser(id, userData){
-  console.log("Updating User:",id);
-  console.log("With Data:",userData);
     return axios.put(`/api/users/${id}`,userData);
+}
+
+function viewUsers(){
+  return axios.get(`/api/users/`);
+}
+function viewUser(id){
+  console.log("Requesting:",`/api/users/${id}`);
+  return axios.get(`/api/users/${id}`);
 }
 export default {
   loginUser,
   createUser,
-  updateUser
+  updateUser,
+  viewUsers,
+  viewUser
 };

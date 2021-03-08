@@ -43,10 +43,10 @@ function App() {
                 <Signup />
               </Route>
               <Route exact path="/users/">
-                <Profile />
+                <Profile viewUsers={true}/>
               </Route>
               <Route exact path="/users/:id">
-                {/* <Users /> */}
+                <Profile />
               </Route>
 
               <Route>{/* <NoMatch /> */}</Route>

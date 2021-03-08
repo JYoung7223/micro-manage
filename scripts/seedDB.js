@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { User, checklist, Role } = require("../models");
+const { User, Checklist, Role } = require("../models");
 require("dotenv").config();
 const dbName = process.env.DB_NAME;
 const dbHost = process.env.DB_HOST;
@@ -87,11 +87,23 @@ const seedDatabase = async () => {
       console.error(err);
       process.exit(1);
     });
-  console.log("Seeding Roles & Users Completed");
+
+
+    await Checklist
+        .remove({})
+        .then(() => Checklist.collection.insertMany(checklistSeed))
+        .then(data => {
+            console.log(data.result.n + " records inserted!");
+            process.exit(0);
+        })
+        .catch(err => {
+            console.error(err);
+            process.exit(1);
+        });
+  console.log("Seeding Completed");
   process.exit(0);
 };
 
-seedDatabase();
 const taskObject = {
   instruction: '',
   explanation: '',
@@ -238,14 +250,4 @@ const checklistSeed = [
   }
 ];
 
-checklist
-  .remove({})
-  .then(() => db.Checklist.collection.insertMany(checklistSeed))
-  .then(data => {
-    console.log(data.result.n + " records inserted!");
-    // process.exit(0);
-  })
-  .catch(err => {
-    console.error(err);
-    process.exit(1);
-  });
+seedDatabase();
