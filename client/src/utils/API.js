@@ -22,6 +22,10 @@ async function saveChecklist(checklist) {
     return await axios.post('/api/checklists/', checklist);
 }
 
+async function updateChecklist(checklist) {
+    return await axios.put('/api/checklists/', checklist);
+}
+
 async function deleteChecklist(checklistId) {
     return await axios.delete('/api/checklists/' + checklistId);
 }
@@ -30,6 +34,7 @@ export default {
    loginUser,
    createUser,
    updateUser,
+   updateChecklist,
    getChecklists,
    saveChecklist,
    deleteChecklist,
