@@ -24,8 +24,8 @@ function Header(){
                         <span className="company-name text-company-primary text-wrap align-left">{headerData.name}</span>
                     </a>
                 </div>
-                <div className="col mr-0">
-                    <span className="text-company-secondary align-right">{headerData.subHeading}</span>"
+                <div className="col my-auto mr-0">
+                    <span className="text-company-secondary align-right">{headerData.subHeading}</span>
                 </div>
             </div>
         </header>

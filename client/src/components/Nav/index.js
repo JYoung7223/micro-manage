@@ -21,9 +21,12 @@ function Nav() {
         Home
       </a>
       {userContext.user ? (
-        <a className="navbar-brand text-white" href="/Users/Logout" onClick={handleLogout}>Logout</a>
+        <>
+          <a className="text-white mx-3" href="/Users/Logout" onClick={handleLogout}>Logout</a>
+          <a className="text-white mx-3" href={`/Users/${userContext.user._id}`}>Profile</a>
+        </>
       ) : (
-        <a className="navbar-brand text-white" href="/Users/Login">Login</a>
+        <a className="text-white" href="/Users/Login">Login</a>
       )}
     </nav>
   );

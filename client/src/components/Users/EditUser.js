@@ -1,5 +1,5 @@
-import React, { useRef, useContext } from "react";
-import {UserContext} from "../../utils/userContext";
+import React, { useRef, useState, useContext, useEffect } from "react";
+import {redirectToLogin, UserContext} from "../../utils/userContext";
 import API from "../../utils/API";
 
 function EditUser(props) {
@@ -10,8 +10,32 @@ function EditUser(props) {
     const emailRef = useRef();
     const passRef = useRef();
     const confirmPassRef = useRef();
-    const activeRef = useRef();
     const { user } = useContext(UserContext);
+    const [ editUser, setEditUser] = useState(user);
+
+    // get the users
+    const getUser = async ()=>{
+        // Check if the edit user is this user or selected user
+        const editUserId = document.location.pathname.split("/")[2];
+        
+        if(editUserId){
+            await API.viewUser(editUserId)
+                .then((res)=>{                    
+                    setEditUser(res.data);
+                })
+                .catch((error)=>{
+                    // console.log("Something Happened:",error);
+                    // alert(error);
+                });
+        }
+    };
+
+    useEffect( () => {
+        if(!user){
+            return redirectToLogin();
+        }   
+        getUser();
+    }, []);
 
     const handleUpdate = async (event) => {
         event.preventDefault();
@@ -45,7 +69,7 @@ function EditUser(props) {
             );
             console.log("response:", response);
             if (response.ok) {
-                document.location.replace(`/users/${response.data.id}`);
+                document.location.replace(`/Users/${response.data.id}`);
             } else {
                 alert(response.statusText);
             }
@@ -55,23 +79,23 @@ function EditUser(props) {
     return (
         <section className="col-sm-9">
             <div className="row">
-                <h2 className="col text-center" id="editUserHeader">Edit {user.firstname}</h2>
+                <h2 className="col text-center" id="editUserHeader">Update {editUser.firstname}</h2>
             </div>
             <form className="form user-form" id="userForm" onSubmit={handleUpdate}>
                 <div className="row">
                     <div className="col text-end" id="firstnameLabel">First Name:</div>
-                    <input className="col form-control" type="text" id="firstname-user" ref={firstRef} placeholder={user.firstname}/>
+                    <input className="col form-control" type="text" id="firstname-user" ref={firstRef} placeholder={editUser.firstname}/>
                 </div>
                 <div className="row">
                     <div className="col text-end" id="middlenameLabel">Middle Name:</div>
-                    <input className="col form-control" type="text" id="middlename-user" ref={middleRef} placeholder={user.middlename}/>
+                    <input className="col form-control" type="text" id="middlename-user" ref={middleRef} placeholder={editUser.middlename}/>
                 </div>
                 <div className="row">
                     <div className="col text-end" id="lastnameLabel">Last Name:</div>
-                    <input className="col form-control" type="text" id="lastname-user" ref={lastRef} placeholder={user.lastname}/>
+                    <input className="col form-control" type="text" id="lastname-user" ref={lastRef} placeholder={editUser.lastname}/>
                 </div><div className="row">
                     <div className="col text-end" id="emailLabel">Email:</div>
-                    <input className="col form-control" type="email" id="email-user" ref={emailRef} placeholder={user.email}/>
+                    <input className="col form-control" type="email" id="email-user" ref={emailRef} placeholder={editUser.email}/>
                 </div>
                 <div className="row">
                     <div className="col text-end" id="passwordLabel">New Password:</div>
@@ -82,8 +106,8 @@ function EditUser(props) {
                     <input className="col form-control" type="password" id="password-confirm" ref={confirmPassRef} />
                 </div>       
                 <div className="row">
-                    <input type="hidden" id="user_id" ref={idRef} value={user._id} />
-                    <button className="mx-auto col-auto btn btn-primary" type="submit" id="updateUser">Update User</button>
+                    <input type="hidden" id="user_id" ref={idRef} value={editUser._id} />
+                    <button className="mx-auto my-3 col-auto btn btn-primary" type="submit" id="updateUser">Update User</button>
                 </div>
             </form>
         </section >

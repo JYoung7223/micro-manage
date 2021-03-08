@@ -10,7 +10,7 @@ function redirectToLogin() {
 }
 
 function redirectToProfile() {
-  document.location.replace("/users");
+  document.location.replace("/users/");
 }
 
 export { 
