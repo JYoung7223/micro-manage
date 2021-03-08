@@ -55,8 +55,10 @@ const Checklist = ( {props} ) => {
 
     return (
 		<div style={ {height: '100%'} }>
-			<h2>Checklist</h2>
-			<MasterDetailGrid phases={checklist.phases}>
+			<h2 style={ {textAlign: 'center', marginBottom: '0px'} }>
+				Checklist: {checklist.title}
+			</h2>
+			<MasterDetailGrid checklist={checklist}>
 
 			</MasterDetailGrid>
 		</div>
