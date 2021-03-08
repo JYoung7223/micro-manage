@@ -8,6 +8,7 @@ import _ from 'lodash';
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import {redirectToLogin, UserContext} from "../../utils/userContext";
+import API from "../../utils/API";
 
 const newChecklist = {_id: '', title: '', phases: []}
 
@@ -22,7 +23,7 @@ export default function ChecklistManagement() {
     }, []);
 
     const getChecklists = async () => {
-        const checklistsResponse = await axios.get('/api/checklists');
+        const checklistsResponse = await API.getChecklists();
 
         setChecklists(checklistsResponse.data);
     }
@@ -33,14 +34,18 @@ export default function ChecklistManagement() {
 
     const fillOutChecklist = async (id) => {
         //If the user is filling out the checklist, copy it and send them to the page
-        let checklist = checklists.filter(ck => ck.id === id);
+        let checklist = checklists.filter(ck => ck._id === id);
         if(checklist.length === 0)
             return;
         let newChecklist = _.cloneDeep(checklist[0]);
-        newChecklist.id = 'newChecklist';
+        delete newChecklist._id;
         newChecklist.template = id;
 
+        newChecklist = await saveChecklist(newChecklist);
+
         setCurrentChecklists([...currentChecklists, newChecklist]);
+
+        goToUpdateChecklist(newChecklist._id);
     }
 
     const continueCurrentChecklist = async (id) => {
@@ -48,7 +53,7 @@ export default function ChecklistManagement() {
         if(currentChecklist === 0)
             return;
 
-        window.location = `/checklist/${currentChecklist[0].id}`;
+        window.location = `/checklist/${currentChecklist[0]._id}`;
     }
 
     const createNewChecklist = async() => {
@@ -60,13 +65,13 @@ export default function ChecklistManagement() {
     const saveChecklist = async(checklist) => {
         if(!checklist._id)
             delete checklist._id;
-        const updatedChecklist = await axios.post('/api/checklists/', checklist);
+        const updatedChecklist = await API.saveChecklist(checklist);
 
         getChecklists();
     };
 
     const deleteChecklist = async(checklistId) => {
-        const deleteChecklist = await axios.delete('/api/checklists/' + checklistId);
+        const deleteChecklist = await API.deleteChecklist(checklistId);
         getChecklists();
     }
 

@@ -11,8 +11,24 @@ function createUser(userData){
 function updateUser(id, userData){
     return axios.put(`/api/users/${id}`,userData);
 }
+
+async function getChecklists() {
+    return await axios.get('/api/checklists');
+}
+
+async function saveChecklist(checklist) {
+    return await axios.post('/api/checklists/', checklist);
+}
+
+async function deleteChecklist(checklistId) {
+    return await axios.delete('/api/checklists/' + checklistId);
+}
+
 export default {
-  loginUser,
-  createUser,
-  updateUser
+   loginUser,
+   createUser,
+   updateUser,
+   getChecklists,
+   saveChecklist,
+   deleteChecklist,
 };
