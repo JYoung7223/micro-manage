@@ -9,8 +9,6 @@ function createUser(userData){
 }
 
 function updateUser(id, userData){
-  console.log("Updating User:",id);
-  console.log("With Data:",userData);
     return axios.put(`/api/users/${id}`,userData);
 }
 
@@ -19,7 +17,8 @@ async function getChecklists() {
 }
 
 async function saveChecklist(checklist) {
-    return await axios.post('/api/checklists/', checklist);
+    let newChecklist = await axios.post('/api/checklists/', checklist);
+    return newChecklist.data;
 }
 
 async function updateChecklist(id, checklist) {

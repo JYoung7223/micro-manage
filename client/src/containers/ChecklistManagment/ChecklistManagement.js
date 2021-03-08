@@ -13,7 +13,8 @@ import API from "../../utils/API";
 const newChecklist = {_id: '', title: '', phases: []}
 
 export default function ChecklistManagement() {
-    const [checklists, setChecklists] = useState([]);
+    const [allChecklists, setAllChecklists] = useState([]);
+    const [checklistTemplates, setChecklistTemplates] = useState([]);
     const [currentChecklists, setCurrentChecklists] = useStickyState([], 'currentChecklist');
 
     const { user } = useContext(UserContext);
@@ -23,9 +24,10 @@ export default function ChecklistManagement() {
     }, []);
 
     const getChecklists = async () => {
-        const checklistsResponse = await API.getChecklists();
+        const allChecklistsResponse = await API.getChecklists();
 
-        setChecklists(checklistsResponse.data);
+        setAllChecklists(allChecklistsResponse.data);
+        setChecklistTemplates(allChecklistsResponse.data.filter(ck => !ck.template));
     }
 
     const goToUpdateChecklist = async (id) => {
@@ -34,11 +36,12 @@ export default function ChecklistManagement() {
 
     const fillOutChecklist = async (id) => {
         //If the user is filling out the checklist, copy it and send them to the page
-        let checklist = checklists.filter(ck => ck._id === id);
+        let checklist = allChecklists.filter(ck => ck._id === id);
         if(checklist.length === 0)
             return;
         let newChecklist = _.cloneDeep(checklist[0]);
         delete newChecklist._id;
+        delete newChecklist.created_date;
         newChecklist.template = id;
 
         newChecklist = await saveChecklist(newChecklist);
@@ -59,16 +62,23 @@ export default function ChecklistManagement() {
     const createNewChecklist = async() => {
         if(!user)
             return redirectToLogin();
-        setChecklists([{...newChecklist, owner: user._id}, ...checklists]);
+        setChecklistTemplates([{...newChecklist, owner: user._id}, ...checklistTemplates]);
     }
 
     const saveChecklist = async(checklist) => {
         if(!checklist._id)
             delete checklist._id;
-        const updatedChecklist = await API.saveChecklist(checklist);
+        const newChecklist = await API.saveChecklist(checklist);
 
         getChecklists();
+        return newChecklist;
     };
+
+    const updateChecklist = async(checklist) => {
+        const updatedChecklist = await API.updateChecklist(checklist);
+
+        getChecklists();
+    }
 
     const deleteChecklist = async(checklistId) => {
         const deleteChecklist = await API.deleteChecklist(checklistId);
@@ -84,7 +94,7 @@ export default function ChecklistManagement() {
             </Grid>
             <List>
                 {
-                    checklists.map(checklist => {
+                    checklistTemplates.map(checklist => {
                         return (<ListItem key={checklist._id + 'li'}>
                             <ChecklistCard
                                 title={checklist.title}
@@ -92,11 +102,13 @@ export default function ChecklistManagement() {
                                 update={goToUpdateChecklist}
                                 continue={continueCurrentChecklist}
                                 deleteChecklist={deleteChecklist}
-                                canContinue={currentChecklists.find(ck => ck.template === checklist.id || ck.template === checklist._id)}
+                                canContinue={currentChecklists.find(ck => ck.template === checklist._id)}
                                 canFillOut={checklist.phases.length > 0}
                                 id={checklist._id}
                                 key={checklist._id}
                                 saveChecklist={(title) => saveChecklist({...checklist, title})}
+                                updateChecklist={(title) => updateChecklist({...checklist, title})}
+                                checklists={allChecklists.filter(ck => ck.template === checklist._id)}
                             >
                                 <List>
                                     {
