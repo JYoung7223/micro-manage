@@ -11,6 +11,7 @@ import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 import './AgGrid.scss';
 import DateTime from "luxon/src/datetime";
 import { v4 as uuidv4 } from 'uuid';
+import API from '../../utils/API'
 
 const now = DateTime.now().toFormat('MM/dd');
 
@@ -101,7 +102,7 @@ const initialState = {
                     // headerClass: 'rotated-header',
                 },
                 {
-                    field: 'line',
+                    field: 'lineNumber',
                     headerName: 'Line #',
                     maxWidth: 100,
                     sortable: true,
@@ -119,15 +120,15 @@ const initialState = {
                 params.columnApi.applyColumnState({
                     state: [
                         {
-                            colId: 'line',
+                            colId: 'lineNumber',
                             sort: 'asc',
                         },
                     ],
                     defaultState: {sort: null},
                 });
             },
-            sortModel: [{field: 'line', sort: 'asc'}],
-            defaultGroupSortComparator: (a,b) => a.line - b.line,
+            sortModel: [{field: 'lineNumber', sort: 'asc'}],
+            defaultGroupSortComparator: (a,b) => a.lineNumber - b.lineNumber,
             defaultColDef: {
                 flex: 1,
                 editable: true,
@@ -165,7 +166,7 @@ const initialState = {
                     explanationRef: '01.01',
                     templateRef: '02.01',
                     mfiRef: '01',
-                    line: 1,
+                    lineNumber: 1,
                     instruction: 'Clean out the dog house',
                 },
                 {
@@ -179,7 +180,7 @@ const initialState = {
                     explanationRef: '01.01',
                     templateRef: '02.01',
                     mfiRef: '02',
-                    line: 2,
+                    lineNumber: 2,
                     instruction: 'Clean out the dog house'
                 },
                 {
@@ -193,7 +194,7 @@ const initialState = {
                     explanationRef: '01.01',
                     templateRef: '02.01',
                     mfiRef: '03',
-                    line: 3,
+                    lineNumber: 3,
                     instruction: 'Clean out the dog house'
                 },
             ]
@@ -201,26 +202,31 @@ const initialState = {
     ],
 };
 
-const MasterDetailGrid = ( {phases} ) => {
+const MasterDetailGrid = ( {checklist: _checklist} ) => {
+    const [checklist, setChecklist] = useState([]);
     const [data, setData] = useState([]);
     const gridApi = useRef({});
     const gridColumnApi = useRef({});
     const sortActive = useRef(true);
 
     useEffect( () => {
+        let rowData = [];
         //Get the row data
-        let rowData = [...phases];
-        // let rowData = checklist;
+        if(_checklist && _checklist.phases) {
+            // let rowData = checklist;
 
-        //Add the phase id to each task, this will help me know which phase to modify when a
-        //task is modified or a new task is added.
-        rowData.forEach(phase => {
-           phase.tasks.forEach(task => task.phaseId = phase._id)
-        });
+            //Add the phase id to each task, this will help me know which phase to modify when a
+            //task is modified or a new task is added.
+            _checklist.phases.forEach(phase => {
+                phase.tasks.forEach(task => task.phaseId = phase._id)
+                rowData.push(phase);
+            });
+        }
 
         //Update the state
         setData(rowData);
-    }, [phases]);
+        setChecklist(_checklist);
+    }, [_checklist]);
 
     const onGridReady = (params) => {
         gridApi.current = params.api;
@@ -281,14 +287,14 @@ const MasterDetailGrid = ( {phases} ) => {
                         let phase = data.find(phase => phase._id === row.phaseId);
 
                         //Create the new task
-                        let newTask = createNewTask(row.phaseId, row.line + 1);
+                        let newTask = createNewTask(row.phaseId, row.lineNumber + 1);
 
                         newTask.phaseId = phase._id;
                         let tasksToAdd = [newTask];
 
                             //Get the tasks where their line #s need updated.
-                        let tasksToUpdate = phase.tasks.filter(task => task.line > row.line);
-                        tasksToUpdate.forEach(task => task.line++);
+                        let tasksToUpdate = phase.tasks.filter(task => task.lineNumber > row.lineNumber);
+                        tasksToUpdate.forEach(task => task.lineNumber++);
 
                         phase.tasks = phase.tasks.concat(tasksToAdd);
 
@@ -302,7 +308,7 @@ const MasterDetailGrid = ( {phases} ) => {
                         params.columnApi.applyColumnState({
                             state: [
                                 {
-                                    colId: 'line',
+                                    colId: 'lineNumber',
                                     sort: 'asc',
                                 },
                             ],
@@ -331,7 +337,7 @@ const MasterDetailGrid = ( {phases} ) => {
         return row._id;
     };
 
-    const createNewTask = (phaseId, line, title) => {
+    const createNewTask = (phaseId, lineNumber, title) => {
         let dt = DateTime.now().toFormat('MM/dd');
         return {
             finalReview: '',
@@ -343,7 +349,7 @@ const MasterDetailGrid = ( {phases} ) => {
             explanationRef: '',
             templateRef: '',
             mfiRef: '',
-            line: line,
+            lineNumber: lineNumber,
             phaseId: phaseId,
             _id: uuidv4(),
             instruction: title || '<Double click or hit enter to enter task instruction / details>',
@@ -365,8 +371,8 @@ const MasterDetailGrid = ( {phases} ) => {
             const newStore = rowData.slice();
             moveInArray(newStore, fromIndex, toIndex);
             newStore.forEach( (row, index) => {
-                if(row.line)
-                    row.line = index + 1;
+                if(row.lineNumber)
+                    row.lineNumber = index + 1;
                 else if(row.order)
                     row.order = index + 1;
             });
@@ -401,7 +407,7 @@ const MasterDetailGrid = ( {phases} ) => {
     initialState.detailCellRendererParams.detailGridOptions.onCellValueChanged = (params) => {
         console.log("cell value changed", params);
         //If the line # changes we want to move the other line #'s around
-        if(params.colDef.field === 'line')
+        if(params.colDef.field === 'lineNumber')
         {
             let newVal = params.value;
             let oldVal = params.oldValue;
@@ -414,22 +420,22 @@ const MasterDetailGrid = ( {phases} ) => {
                     newVal = siblings.length;
 
                 siblings.forEach(sibling => {
-                    if (sibling.line > oldVal && sibling.line <= newVal)
-                        sibling.line--;
+                    if (sibling.lineNumber > oldVal && sibling.lineNumber <= newVal)
+                        sibling.lineNumber--;
                 });
             }
             else if(oldVal > newVal) {
                 if(newVal < 1)
                     newVal = 1;
                 siblings.forEach(sibling => {
-                    if (sibling.line < oldVal && sibling.line >= newVal)
-                        sibling.line++;
+                    if (sibling.lineNumber < oldVal && sibling.lineNumber >= newVal)
+                        sibling.lineNumber++;
                 });
             }
 
             //Update the row
             let row = params.node.data;
-            row.line = newVal;
+            row.lineNumber = newVal;
             siblings.push(row);
 
             params.api.applyTransaction({
@@ -440,7 +446,7 @@ const MasterDetailGrid = ( {phases} ) => {
             params.columnApi.applyColumnState({
                 state: [
                     {
-                        colId: 'line',
+                        colId: 'lineNumber',
                         sort: 'asc',
                     },
                 ],
@@ -449,8 +455,24 @@ const MasterDetailGrid = ( {phases} ) => {
         }
     };
 
+    const saveClicked = () => {
+        //Get the checklist data, check the rowData and see if it has the updates
+        let phases = data;
+        checklist.phases = phases;
+
+        //Call api tto submit the checklist data
+        API.saveChecklist(checklist);
+    };
+
     return (
-        <div style={{ width: '100%', height: 'calc(100% - 50px)' }}>
+        <div style={{ width: '100%', height: 'calc(100% - 50px)', textAlign: 'end' }}>
+            <buton
+                className="btn btn-primary"
+                style={ {marginBottom: '5px'} }
+                onClick={saveClicked}
+            >
+                Save
+            </buton>
             <div
                 id="myGrid"
                 style={{
