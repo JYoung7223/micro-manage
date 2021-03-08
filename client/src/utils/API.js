@@ -1,10 +1,10 @@
 import axios from "axios";
 
-function loginUser(loginData){  
+function loginUser(loginData){
   return axios.post("/api/users/login",loginData);
 }
 
-function createUser(userData){  
+function createUser(userData){
     return axios.post("/api/users/",userData);
 }
 

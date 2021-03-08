@@ -25,6 +25,7 @@ module.exports = {
       });
   },
   update: function(req, res) {
+
     db.Checklist
       .findOneAndUpdate({ _id: req.params.id }, req.body)
       .then(dbModel => res.json(dbModel))

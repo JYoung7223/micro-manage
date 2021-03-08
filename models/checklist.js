@@ -17,7 +17,7 @@ const taskSchema = new Schema({
 
 const phaseSchema = new Schema({
   title: String,
-  order: Number,
+  lineNumber: Number,
   tasks: [taskSchema],
 });
 

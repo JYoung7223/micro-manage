@@ -24,7 +24,7 @@ const initialState = {
     ],
     columnDefs: [
         { field: 'title', headerName: 'Phases', cellRenderer: 'agGroupCellRenderer', rowDrag: true, },
-        { field: 'order', headerName: 'Line', hide: true },
+        { field: 'lineNumber', headerName: 'Line', hide: true },
     ],
     defaultColDef: {
         flex: 1,
@@ -136,7 +136,7 @@ const initialState = {
             },
             headerHeight: 150,
             getRowNodeId: row => {
-                return row._id;
+                return row.lineNumber;
             },
             getContextMenuItems: (params) => { },
             onCellValueChanged: (params) => { },
@@ -218,7 +218,7 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
             //Add the phase id to each task, this will help me know which phase to modify when a
             //task is modified or a new task is added.
             _checklist.phases.forEach(phase => {
-                phase.tasks.forEach(task => task.phaseId = phase._id)
+                phase.tasks.forEach(task => task.phaseId = phase.lineNumber);
                 rowData.push(phase);
             });
         }
@@ -284,12 +284,12 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
                     else
                     {
                         //Get the phase that the selected task is apart of
-                        let phase = data.find(phase => phase._id === row.phaseId);
+                        let phase = data.find(phase => phase.lineNumber === row.phaseId);
 
                         //Create the new task
                         let newTask = createNewTask(row.phaseId, row.lineNumber + 1);
 
-                        newTask.phaseId = phase._id;
+                        newTask.phaseId = phase.lineNumber;
                         let tasksToAdd = [newTask];
 
                             //Get the tasks where their line #s need updated.
@@ -323,18 +323,17 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
         return result;
     };
 
-    const createNewPhase = (order) => {
+    const createNewPhase = (lineNumber) => {
         let id = uuidv4();
         return {
             title: '<Hit enter to enter the title of this phase>',
             tasks: [createNewTask(id, 1)],
-            order,
-            _id: id,
+            lineNumber,
         }
     };
 
     const getRowNodeId = (row) => {
-        return row._id;
+        return row.lineNumber;
     };
 
     const createNewTask = (phaseId, lineNumber, title) => {
@@ -351,7 +350,6 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
             mfiRef: '',
             lineNumber: lineNumber,
             phaseId: phaseId,
-            _id: uuidv4(),
             instruction: title || '<Double click or hit enter to enter task instruction / details>',
         }
     };
@@ -366,15 +364,15 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
         if (rowNeedsToMove) {
             const movingData = movingNode.data;
             const overData = overNode.data;
-            const fromIndex = rowData.findIndex(row => row._id === movingData._id);
-            const toIndex = rowData.findIndex(row => row._id === overData._id);
+            const fromIndex = rowData.findIndex(row => row.lineNumber === movingData.lineNumber);
+            const toIndex = rowData.findIndex(row => row.lineNumber === overData.lineNumber);
             const newStore = rowData.slice();
             moveInArray(newStore, fromIndex, toIndex);
             newStore.forEach( (row, index) => {
                 if(row.lineNumber)
                     row.lineNumber = index + 1;
-                else if(row.order)
-                    row.order = index + 1;
+                else if(row.lineNumber)
+                    row.lineNumber = index + 1;
             });
             // event.api.applyTransaction(newStore);
             event.api.setRowData(newStore);
@@ -466,13 +464,13 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
 
     return (
         <div style={{ width: '100%', height: 'calc(100% - 50px)', textAlign: 'end' }}>
-            <buton
+            <button
                 className="btn btn-primary"
                 style={ {marginBottom: '5px'} }
                 onClick={saveClicked}
             >
                 Save
-            </buton>
+            </button>
             <div
                 id="myGrid"
                 style={{
