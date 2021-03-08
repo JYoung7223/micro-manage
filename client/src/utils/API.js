@@ -9,6 +9,8 @@ function createUser(userData){
 }
 
 function updateUser(id, userData){
+  console.log("Updating User:",id);
+  console.log("With Data:",userData);
     return axios.put(`/api/users/${id}`,userData);
 }
 
