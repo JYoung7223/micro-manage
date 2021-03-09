@@ -20,6 +20,9 @@ function Nav() {
       <a className="navbar-brand text-white" href="/">
         Home
       </a>
+        <a className="navbar-brand text-white" href="/checklist-management">
+            Checklists
+        </a>
       {userContext.user ? (
         <a className="navbar-brand text-white" href="/Users/Logout" onClick={handleLogout}>Logout</a>
       ) : (
