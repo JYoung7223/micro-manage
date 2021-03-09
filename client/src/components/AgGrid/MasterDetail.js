@@ -49,10 +49,17 @@ const initialState = {
                     headerClass: 'rotated-header',
                     maxWidth: 100,
                     valueFormatter: (params) => {
-                        if(params.value)
-                            return DateTime.fromISO(params.value).toFormat('MM/dd');
-                        else
-                            return '';
+
+                        let val = params.value;
+                        if(val) {
+                            val = DateTime.fromISO(val).toFormat('MM/dd');
+                            if(val === 'Invalid DateTime')
+                                val = DateTime.fromJSDate(new Date(params.value)).toFormat('MM/dd');
+
+                            console.log(val);
+                            return val;
+                        }
+                        return '';
                     },
                     // headerClass: 'rotated-text'
                 },
@@ -71,10 +78,17 @@ const initialState = {
                     headerClass: 'rotated-header',
                     maxWidth: 100,
                     valueFormatter: (params) => {
-                        if(params.value)
-                            return DateTime.fromISO(params.value).toFormat('MM/dd');
-                        else
-                            return '';
+
+                        let val = params.value;
+                        if(val) {
+                            val = DateTime.fromISO(val).toFormat('MM/dd');
+                            if(val === 'Invalid DateTime')
+                                val = DateTime.fromJSDate(new Date(params.value)).toFormat('MM/dd');
+
+                            console.log(val);
+                            return val;
+                        }
+                        return '';
                     },
                 },
                 {
@@ -92,33 +106,52 @@ const initialState = {
                     headerClass: 'rotated-header',
                     maxWidth: 100,
                     valueFormatter: (params) => {
-                        if(params.value)
-                            return DateTime.fromISO(params.value).toFormat('MM/dd');
-                        else
-                            return '';
+
+                        let val = params.value;
+                        if(val) {
+                            val = DateTime.fromISO(val).toFormat('MM/dd');
+                            if(val === 'Invalid DateTime')
+                                val = DateTime.fromJSDate(new Date(params.value)).toFormat('MM/dd');
+
+                            console.log(val);
+                            return val;
+                        }
+                        return '';
                     },
                     // cellEditor: 'datePicker',
                     // cellClass: 'initial-cell',
                     // minWidth: 100,
                 },
                 {
-                    field: 'explanationRef',
-                    headerName: 'Explanation Ref',
+                    field: 'explanation',
+                    headerName: 'Explanation',
                     headerClass: 'rotated-header',
                     maxWidth: 200,
+                    cellRenderer: function(params) {
+                        if(params.value.includes('http'))
+                            return '<a href="' + params.value + '" target="_blank">'+ params.value +'</a>';
+                        else
+                            return params.value;
+                    },
                 },
                 {
-                    field: 'templateRef',
-                    headerName: 'Template Ref',
+                    field: 'template',
+                    headerName: 'Source',
                     headerClass: 'rotated-header',
                     maxWidth: 200,
+                    cellRenderer: function(params) {
+                        if(params.value.includes('http'))
+                            return '<a href="' + params.value + '" target="_blank">'+ params.value +'</a>';
+                        else
+                            return params.value;
+                    },
                 },
-                {
-                    field: 'mfiRef',
-                    headerName: 'MFI #',
-                    maxWidth: 200,
-                    // headerClass: 'rotated-header',
-                },
+                // {
+                //     field: 'mfiRef',
+                //     headerName: 'MFI #',
+                //     maxWidth: 200,
+                //     // headerClass: 'rotated-header',
+                // },
                 {
                     field: 'lineNumber',
                     headerName: 'Line #',
@@ -243,33 +276,34 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
                         phasesToUpdate.forEach(phase => phase.lineNumber++);
 
                         // data.push(phasesToAdd[0]);
+                        rows = rows.concat(phasesToAdd).sort(sortByLineNumber);
+                        setData(rows);
 
-
-                        params.api.setRowData(rows.concat(phasesToAdd).sort(sortByLineNumber));
+                        params.api.setRowData(rows);
 
                         // updateGridAndSort(params, {add: phasesToAdd, update: phasesToUpdate} );
                     }
                     //Otherwise we are inserting a new task
                     else
                     {
-                        //Get the phase that the selected task is apart of
-                        let phase = data.find(phase => phase.lineNumber === row.phaseId);
-
                         //Create the new task
                         let newTask = createNewTask(row.phaseId, row.lineNumber + 1);
 
-                        newTask.phaseId = phase.lineNumber;
+                        newTask.phaseId = row.phaseId;
                         let tasksToAdd = [newTask];
 
                         //Get the tasks where their line #s need updated.
-                        let tasksToUpdate = phase.tasks.filter(task => task.lineNumber > row.lineNumber);
+                        let tasksToUpdate = rows.filter(task => task.lineNumber > row.lineNumber);
                         tasksToUpdate.forEach(task => task.lineNumber++);
 
                         // phase.tasks.push(tasksToAdd[0]);
-                        phase.tasks = phase.tasks.concat(tasksToAdd);
+                        rows = rows.concat(tasksToAdd).sort(sortByLineNumber);
 
+                        //Set the phases tasks
+                        let phase = data.find(ph => ph.lineNumber === row.phaseId);
+                        phase.tasks = rows;
 
-                        params.api.setRowData(phase.tasks.sort(sortByLineNumber));
+                        params.api.setRowData(rows);
                         // updateGridAndSort(params, {add: tasksToAdd, update: tasksToUpdate} );
                     }
 
@@ -396,10 +430,9 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
             const newStore = rowData.slice();
             moveInArray(newStore, fromIndex, toIndex);
             newStore.forEach( (row, index) => {
-                if(row.lineNumber)
-                    row.lineNumber = index + 1;
-                else if(row.lineNumber)
-                    row.lineNumber = index + 1;
+                row.lineNumber = index + 1;
+                if(row.tasks)
+                    row.tasks.forEach(task => task.phaseId = row.lineNumber);
             });
             // event.api.applyTransaction(newStore);
             event.api.setRowData(newStore);
@@ -502,6 +535,13 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
 
     return (
         <div style={{ width: '100%', height: 'calc(100% - 50px)', textAlign: 'end' }}>
+            <a
+                href={'/checklist-management'}
+                className="btn btn-info"
+                style={ {marginBottom: '5px', marginRight: '5px'} }
+            >
+                Back to checklists
+            </a>
             <button
                 className="btn btn-primary"
                 style={ {marginBottom: '5px'} }
