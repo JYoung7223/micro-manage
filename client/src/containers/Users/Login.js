@@ -10,7 +10,7 @@ function Login(props) {
     const userContext = useContext(UserContext);     
 
     useEffect( () => {
-        if(userContext.user?._id)
+        if(userContext.user?._id){
             return redirectToProfile();
         }
         if(loginAudioRef.current){
