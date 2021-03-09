@@ -208,7 +208,6 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
     const gridApi = useRef({});
     const gridColumnApi = useRef({});
     const sortActive = useRef(true);
-    const itemCompleteAudioRef = useRef();
 
     useEffect( () => {
         let rowData = [];
@@ -508,13 +507,6 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
                 defaultState: {sort: null},
             });
         }
-        // Play sound when marked complete
-        if((params.colDef.field === 'preparedBy')&&(params.value)){
-            if(itemCompleteAudioRef.current){
-                itemCompleteAudioRef.src = "/sounds/sweet.mp3";
-                itemCompleteAudioRef.play();
-            }
-        }
     };
 
     initialState.detailCellRendererParams.detailGridOptions.getContextMenuItems = getContextMenuItems;
@@ -549,7 +541,6 @@ const MasterDetailGrid = ( {checklist: _checklist} ) => {
             >
                 Save
             </button>
-            <audio id="itemCompleteAudio" ref={itemCompleteAudioRef}></audio>
             <div
                 id="myGrid"
                 style={{
