@@ -46,7 +46,7 @@ Project Contributors are GitHub Users:
 If you have any question about this repo, you may open an issue or contact me directly at jyoung7223@yahoo.com
 You can find more of my work at [My Github Repo](https://github.com/JYoung7223 "My GitHub Repo")
 ## Sample
-Deployed project can be found at: jy-micro-manage.herokuapp.com
+Deployed project can be found at: http://jy-micro-manage.herokuapp.com
 
 Below is a sample screenshot:
 ![Project Sample](./assets/images/my-checklist.png "Project Sample")
